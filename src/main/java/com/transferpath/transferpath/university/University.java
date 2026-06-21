@@ -16,13 +16,29 @@ public class University {
     private String country;
     private Double minGpa;
 
+    private String state;
+    private String city;
+    private String applicationDeadline;
+    private String websiteUrl;
+
     public University() {
     }
 
-    public University(String name, String country, Double minGpa) {
+    public University(String name,
+                      String country,
+                      Double minGpa,
+                      String state,
+                      String city,
+                      String applicationDeadline,
+                      String websiteUrl) {
+
         this.name = name;
         this.country = country;
         this.minGpa = minGpa;
+        this.state = state;
+        this.city = city;
+        this.applicationDeadline = applicationDeadline;
+        this.websiteUrl = websiteUrl;
     }
 
     public Long getId() {
@@ -51,5 +67,37 @@ public class University {
 
     public void setMinGpa(Double minGpa) {
         this.minGpa = minGpa;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setApplicationDeadline(String applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
     }
 }

@@ -16,12 +16,18 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        repository.save(
-                new University(
-                        "University of Illinois Urbana-Champaign",
-                        "USA",
-                        3.5
-                )
-        );
+        if (repository.count() == 0) {
+            repository.save(
+                    new University(
+                            "University of Illinois Urbana-Champaign",
+                            "USA",
+                            3.5,
+                            "Illinois",
+                            "Urbana-Champaign",
+                            "March 1",
+                            "https://www.admissions.illinois.edu/apply/transfer"
+                    )
+            );
+        }
     }
 }
