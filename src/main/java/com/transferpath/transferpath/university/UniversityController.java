@@ -54,6 +54,17 @@ public class UniversityController {
         return repository.findByAcceptsSpring(accepted);
     }
 
+    @GetMapping("/search/filter")
+    public List<University> filterUniversities(
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) Double gpa,
+            @RequestParam(required = false) Boolean international,
+            @RequestParam(required = false) Boolean fall,
+            @RequestParam(required = false) Boolean spring
+    ) {
+        return repository.filterUniversities(country, gpa, international, fall, spring);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);

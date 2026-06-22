@@ -140,9 +140,33 @@
     function searchUniversities() {
         const country = document.getElementById("country").value;
         const gpa = document.getElementById("gpa").value;
+        const international = document.getElementById("international").value;
+        const fall = document.getElementById("fall").checked;
+        const spring = document.getElementById("spring").checked;
 
-        const url = "/universities/search/basic?country=" + encodeURIComponent(country)
-            + "&gpa=" + encodeURIComponent(gpa);
+        const params = new URLSearchParams();
+
+        if (country !== "") {
+            params.append("country", country);
+        }
+
+        if (gpa !== "") {
+            params.append("gpa", gpa);
+        }
+
+        if (international !== "") {
+            params.append("international", international);
+        }
+
+        if (fall) {
+            params.append("fall", "true");
+        }
+
+        if (spring) {
+            params.append("spring", "true");
+        }
+
+        const url = "/universities/search/filter?" + params.toString();
 
         fetch(url)
             .then(response => response.json())
@@ -160,24 +184,24 @@
 
         if (universities.length === 0) {
             resultsTable.innerHTML = `
-                    <tr>
-                        <td colspan="6">No universities found.</td>
-                    </tr>
-                `;
+                <tr>
+                    <td colspan="6">No universities found.</td>
+                </tr>
+            `;
             return;
         }
 
         universities.forEach(university => {
             const row = `
-                    <tr>
-                        <td>${university.name}</td>
-                        <td>${university.country}</td>
-                        <td>${university.minGpa}</td>
-                        <td>${university.acceptsInternational}</td>
-                        <td>${university.acceptsFall}</td>
-                        <td>${university.acceptsSpring}</td>
-                    </tr>
-                `;
+                <tr>
+                    <td>${university.name}</td>
+                    <td>${university.country}</td>
+                    <td>${university.minGpa}</td>
+                    <td>${university.acceptsInternational}</td>
+                    <td>${university.acceptsFall}</td>
+                    <td>${university.acceptsSpring}</td>
+                </tr>
+            `;
 
             resultsTable.innerHTML += row;
         });
