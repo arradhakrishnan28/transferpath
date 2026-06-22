@@ -19,6 +19,11 @@ public class UniversityController {
         return repository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public University getUniversityById(@PathVariable Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);
