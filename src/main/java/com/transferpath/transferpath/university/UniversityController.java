@@ -24,8 +24,13 @@ public class UniversityController {
         return repository.findById(id).orElse(null);
     }
 
-    @GetMapping("/match/{gpa}")
-    public List<University> matchUniversities(@PathVariable Double gpa) {
+    @GetMapping("/search")
+    public List<University> searchByCountry(@RequestParam String country) {
+        return repository.findByCountry(country);
+    }
+
+    @GetMapping("/search/gpa")
+    public List<University> searchByGpa(@RequestParam Double gpa) {
         return repository.findByMinGpaLessThanEqual(gpa);
     }
 
