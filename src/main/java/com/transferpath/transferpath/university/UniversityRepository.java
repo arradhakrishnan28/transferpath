@@ -11,6 +11,8 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
 
     List<University> findByCountryAndMinGpaLessThanEqual(String country, Double gpa);
 
+    List<University> findByAcceptsInternational(Boolean accepted);
+
 
 
 }

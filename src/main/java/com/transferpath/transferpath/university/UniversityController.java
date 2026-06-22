@@ -39,6 +39,11 @@ public class UniversityController {
         return repository.findByCountryAndMinGpaLessThanEqual(country, gpa);
     }
 
+    @GetMapping("/search/international")
+    public List<University> searchByInternational(@RequestParam Boolean accepted) {
+        return repository.findByAcceptsInternational(accepted);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);
