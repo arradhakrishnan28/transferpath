@@ -9,6 +9,8 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
 
     List<University> findByCountry(String country);
 
+    List<University> findByCountryAndMinGpaLessThanEqual(String country, Double gpa);
+
 
 
 }

@@ -34,6 +34,11 @@ public class UniversityController {
         return repository.findByMinGpaLessThanEqual(gpa);
     }
 
+    @GetMapping("/search/basic")
+    public List<University> basicSearch(@RequestParam String country, @RequestParam Double gpa) {
+        return repository.findByCountryAndMinGpaLessThanEqual(country, gpa);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);
