@@ -13,6 +13,10 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
 
     List<University> findByAcceptsInternational(Boolean accepted);
 
+    List<University> findByAcceptsFall(Boolean accepted);
+
+    List<University> findByAcceptsSpring(Boolean accepted);
+
 
 
 }

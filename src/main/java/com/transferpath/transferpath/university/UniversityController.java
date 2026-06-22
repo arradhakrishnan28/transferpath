@@ -44,6 +44,16 @@ public class UniversityController {
         return repository.findByAcceptsInternational(accepted);
     }
 
+    @GetMapping("/search/fall")
+    public List<University> searchByFall(@RequestParam Boolean accepted) {
+        return repository.findByAcceptsFall(accepted);
+    }
+
+    @GetMapping("/search/spring")
+    public List<University> searchBySpring(@RequestParam Boolean accepted) {
+        return repository.findByAcceptsSpring(accepted);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);
