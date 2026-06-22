@@ -24,6 +24,11 @@ public class UniversityController {
         return repository.findById(id).orElse(null);
     }
 
+    @GetMapping("/match/{gpa}")
+    public List<University> matchUniversities(@PathVariable Double gpa) {
+        return repository.findByMinGpaLessThanEqual(gpa);
+    }
+
     @PostMapping
     public University addUniversity(@RequestBody University university) {
         return repository.save(university);

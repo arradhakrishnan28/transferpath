@@ -21,6 +21,12 @@ public class University {
     private String applicationDeadline;
     private String websiteUrl;
 
+    private Boolean acceptsInternational;
+    private Boolean acceptsFall;
+    private Boolean acceptsSpring;
+    private String applicationPortal;
+    private String transferRequirements;
+
     public University() {
     }
 
@@ -30,7 +36,12 @@ public class University {
                       String state,
                       String city,
                       String applicationDeadline,
-                      String websiteUrl) {
+                      String websiteUrl,
+                      Boolean acceptsInternational,
+                      Boolean acceptsFall,
+                      Boolean acceptsSpring,
+                      String applicationPortal,
+                      String transferRequirements) {
 
         this.name = name;
         this.country = country;
@@ -39,6 +50,12 @@ public class University {
         this.city = city;
         this.applicationDeadline = applicationDeadline;
         this.websiteUrl = websiteUrl;
+
+        this.acceptsInternational = acceptsInternational;
+        this.acceptsFall = acceptsFall;
+        this.acceptsSpring = acceptsSpring;
+        this.applicationPortal = applicationPortal;
+        this.transferRequirements = transferRequirements;
     }
 
     public Long getId() {
@@ -100,4 +117,45 @@ public class University {
     public void setWebsiteUrl(String websiteUrl) {
         this.websiteUrl = websiteUrl;
     }
+
+    public Boolean getAcceptsInternational() {
+        return acceptsInternational;
+    }
+
+    public void setAcceptsInternational(Boolean acceptsInternational) {
+        this.acceptsInternational = acceptsInternational;
+    }
+
+    public Boolean getAcceptsFall() {
+        return acceptsFall;
+    }
+
+    public void setAcceptsFall(Boolean acceptsFall) {
+        this.acceptsFall = acceptsFall;
+    }
+
+    public Boolean getAcceptsSpring() {
+        return acceptsSpring;
+    }
+
+    public void setAcceptsSpring(Boolean acceptsSpring) {
+        this.acceptsSpring = acceptsSpring;
+    }
+
+    public String getApplicationPortal() {
+        return applicationPortal;
+    }
+
+    public void setApplicationPortal(String applicationPortal) {
+        this.applicationPortal = applicationPortal;
+    }
+
+    public String getTransferRequirements() {
+        return transferRequirements;
+    }
+
+    public void setTransferRequirements(String transferRequirements) {
+        this.transferRequirements = transferRequirements;
+    }
+
 }

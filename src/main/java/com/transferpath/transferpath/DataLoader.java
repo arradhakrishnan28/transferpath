@@ -16,7 +16,9 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+
         if (repository.count() == 0) {
+
             repository.save(
                     new University(
                             "University of Illinois Urbana-Champaign",
@@ -25,9 +27,15 @@ public class DataLoader implements CommandLineRunner {
                             "Illinois",
                             "Urbana-Champaign",
                             "March 1",
-                            "https://www.admissions.illinois.edu/apply/transfer"
+                            "https://www.admissions.illinois.edu/apply/transfer",
+                            true,
+                            true,
+                            false,
+                            "University application",
+                            "Strong GPA, major prerequisites, college coursework"
                     )
             );
+
         }
     }
 }
