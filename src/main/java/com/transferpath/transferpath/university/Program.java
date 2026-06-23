@@ -1,5 +1,6 @@
 package com.transferpath.transferpath.university;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ public class Program {
     private String competitivenessLevel;
     private String programUrl;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
@@ -77,6 +79,10 @@ public class Program {
 
     public University getUniversity() {
         return university;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setMajorName(String majorName) {

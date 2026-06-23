@@ -25,6 +25,8 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
         if (universityRepository.count() == 0) {
             seedUniversitiesAndPrograms();
+        } else if (programRepository.count() == 0) {
+            seedProgramsForExistingUniversities();
         }
     }
 
@@ -113,6 +115,35 @@ public class DataLoader implements CommandLineRunner {
                         "College coursework required"
                 )
         );
+
+        seedPrograms(uiuc, purdue, wisconsin, maryland, arizonaState);
+    }
+
+    private void seedProgramsForExistingUniversities() {
+        University uiuc = universityRepository.findByCountry("USA").stream()
+                .filter(university -> university.getName().equals("University of Illinois Urbana-Champaign"))
+                .findFirst()
+                .orElseThrow();
+
+        University purdue = universityRepository.findByCountry("USA").stream()
+                .filter(university -> university.getName().equals("Purdue University"))
+                .findFirst()
+                .orElseThrow();
+
+        University wisconsin = universityRepository.findByCountry("USA").stream()
+                .filter(university -> university.getName().equals("University of Wisconsin-Madison"))
+                .findFirst()
+                .orElseThrow();
+
+        University maryland = universityRepository.findByCountry("USA").stream()
+                .filter(university -> university.getName().equals("University of Maryland"))
+                .findFirst()
+                .orElseThrow();
+
+        University arizonaState = universityRepository.findByCountry("USA").stream()
+                .filter(university -> university.getName().equals("Arizona State University"))
+                .findFirst()
+                .orElseThrow();
 
         seedPrograms(uiuc, purdue, wisconsin, maryland, arizonaState);
     }
