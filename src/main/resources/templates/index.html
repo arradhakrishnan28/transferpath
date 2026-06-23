@@ -72,7 +72,7 @@
         table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 1100px;
+            min-width: 1200px;
             background-color: white;
         }
 
@@ -89,6 +89,11 @@
         }
 
         a {
+            color: #1f4e79;
+        }
+
+        .fit-score {
+            font-weight: bold;
             color: #1f4e79;
         }
     </style>
@@ -143,6 +148,7 @@
         <thead>
         <tr>
             <th>Name</th>
+            <th>Fit Score</th>
             <th>Location</th>
             <th>Country</th>
             <th>Minimum GPA</th>
@@ -157,7 +163,7 @@
         </thead>
         <tbody id="results">
         <tr>
-            <td colspan="11">No results yet.</td>
+            <td colspan="12">No results yet.</td>
         </tr>
         </tbody>
     </table>
@@ -244,7 +250,7 @@
         const resultsTable = document.getElementById("results");
         resultsTable.innerHTML = `
             <tr>
-                <td colspan="11">No results yet.</td>
+                <td colspan="12">No results yet.</td>
             </tr>
         `;
 
@@ -266,7 +272,7 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="11">No universities found.</td>
+                    <td colspan="12">No universities found.</td>
                 </tr>
             `;
             return;
@@ -282,6 +288,7 @@
             const row = `
                 <tr>
                     <td>${university.name}</td>
+                    <td class="fit-score">${university.fitScore}</td>
                     <td>${location}</td>
                     <td>${university.country}</td>
                     <td>${university.minGpa}</td>
