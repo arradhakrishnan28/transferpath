@@ -195,6 +195,14 @@
             });
     }
 
+    function yesOrNo(value) {
+        if (value === true) {
+            return "Yes";
+        }
+
+        return "No";
+    }
+
     function displayResults(universities) {
         const resultsTable = document.getElementById("results");
         resultsTable.innerHTML = "";
@@ -221,9 +229,9 @@
                     <td>${location}</td>
                     <td>${university.country}</td>
                     <td>${university.minGpa}</td>
-                    <td>${university.acceptsInternational}</td>
-                    <td>${university.acceptsFall}</td>
-                    <td>${university.acceptsSpring}</td>
+                    <td>${yesOrNo(university.acceptsInternational)}</td>
+                    <td>${yesOrNo(university.acceptsFall)}</td>
+                    <td>${yesOrNo(university.acceptsSpring)}</td>
                     <td>${university.applicationDeadline}</td>
                     <td>${websiteLink}</td>
                     <td>${university.applicationPortal}</td>
