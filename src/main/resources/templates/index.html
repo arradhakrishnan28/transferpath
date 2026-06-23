@@ -72,7 +72,7 @@
         table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 1200px;
+            min-width: 1400px;
             background-color: white;
         }
 
@@ -95,6 +95,15 @@
         .fit-score {
             font-weight: bold;
             color: #1f4e79;
+        }
+
+        .fit-reasons {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .fit-reasons li {
+            margin-bottom: 4px;
         }
     </style>
 </head>
@@ -149,6 +158,7 @@
         <tr>
             <th>Name</th>
             <th>Fit Score</th>
+            <th>Fit Reasons</th>
             <th>Location</th>
             <th>Country</th>
             <th>Minimum GPA</th>
@@ -163,7 +173,7 @@
         </thead>
         <tbody id="results">
         <tr>
-            <td colspan="12">No results yet.</td>
+            <td colspan="13">No results yet.</td>
         </tr>
         </tbody>
     </table>
@@ -250,7 +260,7 @@
         const resultsTable = document.getElementById("results");
         resultsTable.innerHTML = `
             <tr>
-                <td colspan="12">No results yet.</td>
+                <td colspan="13">No results yet.</td>
             </tr>
         `;
 
@@ -265,6 +275,18 @@
         return "No";
     }
 
+    function buildFitReasonsList(fitReasons) {
+        if (!fitReasons || fitReasons.length === 0) {
+            return "N/A";
+        }
+
+        const items = fitReasons
+            .map(reason => `<li>${reason}</li>`)
+            .join("");
+
+        return `<ul class="fit-reasons">${items}</ul>`;
+    }
+
     function displayResults(universities) {
         const resultsTable = document.getElementById("results");
         resultsTable.innerHTML = "";
@@ -272,7 +294,7 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="12">No universities found.</td>
+                    <td colspan="13">No universities found.</td>
                 </tr>
             `;
             return;
@@ -284,11 +306,13 @@
                 : "N/A";
 
             const location = `${university.city}, ${university.state}`;
+            const fitReasonsList = buildFitReasonsList(university.fitReasons);
 
             const row = `
                 <tr>
                     <td>${university.name}</td>
                     <td class="fit-score">${university.fitScore}</td>
+                    <td>${fitReasonsList}</td>
                     <td>${location}</td>
                     <td>${university.country}</td>
                     <td>${university.minGpa}</td>
