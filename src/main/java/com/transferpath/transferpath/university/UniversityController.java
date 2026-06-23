@@ -9,9 +9,14 @@ import java.util.List;
 public class UniversityController {
 
     private final UniversityRepository repository;
+    private final UniversityService universityService;
 
-    public UniversityController(UniversityRepository repository) {
+    public UniversityController(
+            UniversityRepository repository,
+            UniversityService universityService
+    ) {
         this.repository = repository;
+        this.universityService = universityService;
     }
 
     @GetMapping
@@ -55,14 +60,14 @@ public class UniversityController {
     }
 
     @GetMapping("/search/filter")
-    public List<University> filterUniversities(
+    public List<UniversitySearchResult> filterUniversities(
             @RequestParam(required = false) String country,
             @RequestParam(required = false) Double gpa,
             @RequestParam(required = false) Boolean international,
             @RequestParam(required = false) Boolean fall,
             @RequestParam(required = false) Boolean spring
     ) {
-        return repository.filterUniversities(country, gpa, international, fall, spring);
+        return universityService.searchUniversities(country, gpa, international, fall, spring);
     }
 
     @PostMapping
