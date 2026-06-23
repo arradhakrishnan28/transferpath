@@ -56,9 +56,14 @@
             background-color: #163a5c;
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
+            min-width: 1100px;
             background-color: white;
         }
 
@@ -67,10 +72,15 @@
             border: 1px solid #cccccc;
             padding: 10px;
             text-align: left;
+            vertical-align: top;
         }
 
         th {
             background-color: #e9eef5;
+        }
+
+        a {
+            color: #1f4e79;
         }
     </style>
 </head>
@@ -118,23 +128,30 @@
 
 <h2>Results</h2>
 
-<table>
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Country</th>
-        <th>Minimum GPA</th>
-        <th>International</th>
-        <th>Fall</th>
-        <th>Spring</th>
-    </tr>
-    </thead>
-    <tbody id="results">
-    <tr>
-        <td colspan="6">No results yet.</td>
-    </tr>
-    </tbody>
-</table>
+<div class="table-wrapper">
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Country</th>
+            <th>Minimum GPA</th>
+            <th>International</th>
+            <th>Fall</th>
+            <th>Spring</th>
+            <th>Deadline</th>
+            <th>Website</th>
+            <th>Application Portal</th>
+            <th>Transfer Requirements</th>
+        </tr>
+        </thead>
+        <tbody id="results">
+        <tr>
+            <td colspan="11">No results yet.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 <script>
     function searchUniversities() {
@@ -185,21 +202,32 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="6">No universities found.</td>
+                    <td colspan="11">No universities found.</td>
                 </tr>
             `;
             return;
         }
 
         universities.forEach(university => {
+            const websiteLink = university.websiteUrl
+                ? `<a href="${university.websiteUrl}" target="_blank">Visit website</a>`
+                : "N/A";
+
+            const location = `${university.city}, ${university.state}`;
+
             const row = `
                 <tr>
                     <td>${university.name}</td>
+                    <td>${location}</td>
                     <td>${university.country}</td>
                     <td>${university.minGpa}</td>
                     <td>${university.acceptsInternational}</td>
                     <td>${university.acceptsFall}</td>
                     <td>${university.acceptsSpring}</td>
+                    <td>${university.applicationDeadline}</td>
+                    <td>${websiteLink}</td>
+                    <td>${university.applicationPortal}</td>
+                    <td>${university.transferRequirements}</td>
                 </tr>
             `;
 
