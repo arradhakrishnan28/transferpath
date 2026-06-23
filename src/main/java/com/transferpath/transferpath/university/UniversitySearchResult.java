@@ -1,5 +1,7 @@
 package com.transferpath.transferpath.university;
 
+import java.util.List;
+
 public class UniversitySearchResult {
 
     private Long id;
@@ -19,6 +21,7 @@ public class UniversitySearchResult {
     private String transferRequirements;
 
     private Double fitScore;
+    private List<String> fitReasons;
 
     public UniversitySearchResult(
             Long id,
@@ -34,7 +37,8 @@ public class UniversitySearchResult {
             String websiteUrl,
             String applicationPortal,
             String transferRequirements,
-            Double fitScore
+            Double fitScore,
+            List<String> fitReasons
     ) {
         this.id = id;
         this.name = name;
@@ -50,9 +54,14 @@ public class UniversitySearchResult {
         this.applicationPortal = applicationPortal;
         this.transferRequirements = transferRequirements;
         this.fitScore = fitScore;
+        this.fitReasons = fitReasons;
     }
 
-    public static UniversitySearchResult fromUniversity(University university, Double fitScore) {
+    public static UniversitySearchResult fromUniversity(
+            University university,
+            Double fitScore,
+            List<String> fitReasons
+    ) {
         return new UniversitySearchResult(
                 university.getId(),
                 university.getName(),
@@ -67,7 +76,8 @@ public class UniversitySearchResult {
                 university.getWebsiteUrl(),
                 university.getApplicationPortal(),
                 university.getTransferRequirements(),
-                fitScore
+                fitScore,
+                fitReasons
         );
     }
 
@@ -125,5 +135,9 @@ public class UniversitySearchResult {
 
     public Double getFitScore() {
         return fitScore;
+    }
+
+    public List<String> getFitReasons() {
+        return fitReasons;
     }
 }
