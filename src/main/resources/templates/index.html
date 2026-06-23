@@ -154,7 +154,35 @@
 </div>
 
 <script>
-    function searchUniversities() {
+    window.addEventListener("load", function () {
+        loadSearchFromUrl();
+
+        if (window.location.search !== "") {
+            searchUniversities(false);
+        }
+    });
+
+    function searchUniversities(updateBrowserUrl = true) {
+        const params = buildSearchParams();
+
+        if (updateBrowserUrl) {
+            const newUrl = window.location.pathname + "?" + params.toString();
+            window.history.pushState({}, "", newUrl);
+        }
+
+        const apiUrl = "/universities/search/filter?" + params.toString();
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(universities => {
+                displayResults(universities);
+            })
+            .catch(error => {
+                console.error("Error searching universities:", error);
+            });
+    }
+
+    function buildSearchParams() {
         const country = document.getElementById("country").value;
         const gpa = document.getElementById("gpa").value;
         const international = document.getElementById("international").value;
@@ -183,16 +211,17 @@
             params.append("spring", "true");
         }
 
-        const url = "/universities/search/filter?" + params.toString();
+        return params;
+    }
 
-        fetch(url)
-            .then(response => response.json())
-            .then(universities => {
-                displayResults(universities);
-            })
-            .catch(error => {
-                console.error("Error searching universities:", error);
-            });
+    function loadSearchFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+
+        document.getElementById("country").value = params.get("country") || "";
+        document.getElementById("gpa").value = params.get("gpa") || "";
+        document.getElementById("international").value = params.get("international") || "";
+        document.getElementById("fall").checked = params.get("fall") === "true";
+        document.getElementById("spring").checked = params.get("spring") === "true";
     }
 
     function yesOrNo(value) {
