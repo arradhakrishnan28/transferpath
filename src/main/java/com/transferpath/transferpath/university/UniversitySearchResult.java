@@ -23,6 +23,13 @@ public class UniversitySearchResult {
     private Double fitScore;
     private List<String> fitReasons;
 
+    private String matchedMajor;
+    private String matchedDegreeLevel;
+    private Double estimatedAnnualCost;
+    private Double minimumRecommendedProgramGpa;
+    private String programCompetitiveness;
+    private String programUrl;
+
     public UniversitySearchResult(
             Long id,
             String name,
@@ -38,7 +45,13 @@ public class UniversitySearchResult {
             String applicationPortal,
             String transferRequirements,
             Double fitScore,
-            List<String> fitReasons
+            List<String> fitReasons,
+            String matchedMajor,
+            String matchedDegreeLevel,
+            Double estimatedAnnualCost,
+            Double minimumRecommendedProgramGpa,
+            String programCompetitiveness,
+            String programUrl
     ) {
         this.id = id;
         this.name = name;
@@ -55,12 +68,19 @@ public class UniversitySearchResult {
         this.transferRequirements = transferRequirements;
         this.fitScore = fitScore;
         this.fitReasons = fitReasons;
+        this.matchedMajor = matchedMajor;
+        this.matchedDegreeLevel = matchedDegreeLevel;
+        this.estimatedAnnualCost = estimatedAnnualCost;
+        this.minimumRecommendedProgramGpa = minimumRecommendedProgramGpa;
+        this.programCompetitiveness = programCompetitiveness;
+        this.programUrl = programUrl;
     }
 
     public static UniversitySearchResult fromUniversity(
             University university,
             Double fitScore,
-            List<String> fitReasons
+            List<String> fitReasons,
+            Program matchedProgram
     ) {
         return new UniversitySearchResult(
                 university.getId(),
@@ -77,7 +97,13 @@ public class UniversitySearchResult {
                 university.getApplicationPortal(),
                 university.getTransferRequirements(),
                 fitScore,
-                fitReasons
+                fitReasons,
+                matchedProgram == null ? null : matchedProgram.getMajorName(),
+                matchedProgram == null ? null : matchedProgram.getDegreeLevel(),
+                matchedProgram == null ? null : matchedProgram.getEstimatedAnnualCost(),
+                matchedProgram == null ? null : matchedProgram.getMinimumRecommendedGpa(),
+                matchedProgram == null ? null : matchedProgram.getCompetitivenessLevel(),
+                matchedProgram == null ? null : matchedProgram.getProgramUrl()
         );
     }
 
@@ -139,5 +165,29 @@ public class UniversitySearchResult {
 
     public List<String> getFitReasons() {
         return fitReasons;
+    }
+
+    public String getMatchedMajor() {
+        return matchedMajor;
+    }
+
+    public String getMatchedDegreeLevel() {
+        return matchedDegreeLevel;
+    }
+
+    public Double getEstimatedAnnualCost() {
+        return estimatedAnnualCost;
+    }
+
+    public Double getMinimumRecommendedProgramGpa() {
+        return minimumRecommendedProgramGpa;
+    }
+
+    public String getProgramCompetitiveness() {
+        return programCompetitiveness;
+    }
+
+    public String getProgramUrl() {
+        return programUrl;
     }
 }

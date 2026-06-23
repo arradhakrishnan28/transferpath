@@ -65,9 +65,10 @@ public class UniversityController {
             @RequestParam(required = false) Double gpa,
             @RequestParam(required = false) Boolean international,
             @RequestParam(required = false) Boolean fall,
-            @RequestParam(required = false) Boolean spring
+            @RequestParam(required = false) Boolean spring,
+            @RequestParam(required = false) String major
     ) {
-        return universityService.searchUniversities(country, gpa, international, fall, spring);
+        return universityService.searchUniversities(country, gpa, international, fall, spring, major);
     }
 
     @PostMapping
