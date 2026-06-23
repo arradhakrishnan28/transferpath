@@ -56,6 +56,15 @@
             background-color: #163a5c;
         }
 
+        .secondary-button {
+            background-color: #666666;
+            margin-left: 8px;
+        }
+
+        .secondary-button:hover {
+            background-color: #444444;
+        }
+
         .table-wrapper {
             overflow-x: auto;
         }
@@ -124,6 +133,7 @@
     <br>
 
     <button onclick="searchUniversities()">Search</button>
+    <button onclick="clearSearch()" class="secondary-button">Clear Search</button>
 </div>
 
 <h2>Results</h2>
@@ -222,6 +232,23 @@
         document.getElementById("international").value = params.get("international") || "";
         document.getElementById("fall").checked = params.get("fall") === "true";
         document.getElementById("spring").checked = params.get("spring") === "true";
+    }
+
+    function clearSearch() {
+        document.getElementById("country").value = "";
+        document.getElementById("gpa").value = "";
+        document.getElementById("international").value = "";
+        document.getElementById("fall").checked = false;
+        document.getElementById("spring").checked = false;
+
+        const resultsTable = document.getElementById("results");
+        resultsTable.innerHTML = `
+            <tr>
+                <td colspan="11">No results yet.</td>
+            </tr>
+        `;
+
+        window.history.pushState({}, "", window.location.pathname);
     }
 
     function yesOrNo(value) {
