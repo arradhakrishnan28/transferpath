@@ -22,7 +22,7 @@ public interface UniversityRepository extends JpaRepository<University, Long> {
 
     @Query("""
             SELECT u FROM University u
-            WHERE (:country IS NULL OR :country = '' OR LOWER(u.country) = LOWER(:country))
+            WHERE (:country IS NULL OR :country = '' OR LOWER(u.country) LIKE LOWER(CONCAT('%', :country, '%')))
             AND (:gpa IS NULL OR u.minGpa <= :gpa)
             AND (:international IS NULL OR u.acceptsInternational = :international)
             AND (:fall IS NULL OR u.acceptsFall = :fall)
