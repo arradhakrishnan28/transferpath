@@ -1,0 +1,11 @@
+name,country,state,city,min_gpa,application_deadline,website_url,accepts_international,accepts_fall,accepts_spring,application_portal,transfer_requirements
+University of Illinois Urbana-Champaign,USA,Illinois,Urbana-Champaign,3.5,March 1,https://www.admissions.illinois.edu/apply/transfer,true,true,false,University application,"Strong GPA, major prerequisites, college coursework"
+Purdue University,USA,Indiana,West Lafayette,3.4,June 1,https://www.admissions.purdue.edu/apply/transfer,true,true,false,University application,"Calculus, programming courses preferred"
+University of Wisconsin-Madison,USA,Wisconsin,Madison,3.5,February 1,https://admissions.wisc.edu/apply-as-a-transfer-student,true,true,false,University application,"Strong academic record and college coursework"
+University of Maryland,USA,Maryland,College Park,3.4,March 1,https://admissions.umd.edu/apply/admission-requirements/transfer-applicant-requirements,true,true,false,University application,"Competitive transfer applicant with completed prerequisites"
+Arizona State University,USA,Arizona,Tempe,3.0,Rolling,https://admission.asu.edu/apply/transfer,true,true,true,University application,"College coursework required"
+University of Michigan,USA,Michigan,Ann Arbor,3.7,February 1,https://admissions.umich.edu/apply/transfer-applicants,true,true,false,Common Application,"Strong academic record and rigorous college coursework"
+Georgia Institute of Technology,USA,Georgia,Atlanta,3.6,March 1,https://admission.gatech.edu/transfer,true,true,false,Transfer application,"Major prerequisites and competitive college GPA"
+University of Texas at Austin,USA,Texas,Austin,3.5,March 1,https://admissions.utexas.edu/apply/transfer-students,true,true,false,ApplyTexas,"Transferable coursework and major-specific requirements"
+University of California Berkeley,USA,California,Berkeley,3.7,November 30,https://admissions.berkeley.edu/apply-to-berkeley/transfer-students,true,true,false,UC Application,"Major preparation and strong academic performance"
+University of California Los Angeles,USA,California,Los Angeles,3.7,November 30,https://admission.ucla.edu/apply/transfer,true,true,false,UC Application,"Major preparation and competitive transfer coursework"
