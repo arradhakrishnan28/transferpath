@@ -1,0 +1,31 @@
+university_name,major_name,degree_level,estimated_annual_cost,minimum_recommended_gpa,competitiveness_level,program_url
+University of Illinois Urbana-Champaign,Computer Science,Bachelor's,45000,3.7,Highly Competitive,https://cs.illinois.edu
+University of Illinois Urbana-Champaign,Data Science,Bachelor's,44000,3.6,Competitive,https://ischool.illinois.edu
+University of Illinois Urbana-Champaign,Information Science,Bachelor's,42000,3.4,Competitive,https://ischool.illinois.edu
+Purdue University,Computer Science,Bachelor's,42000,3.6,Highly Competitive,https://www.cs.purdue.edu
+Purdue University,Data Science,Bachelor's,40000,3.4,Competitive,https://www.purdue.edu/science
+Purdue University,Software Engineering,Bachelor's,41000,3.5,Competitive,https://polytechnic.purdue.edu
+University of Wisconsin-Madison,Computer Science,Bachelor's,43000,3.6,Highly Competitive,https://www.cs.wisc.edu
+University of Wisconsin-Madison,Data Science,Bachelor's,42000,3.5,Competitive,https://datascience.wisc.edu
+University of Wisconsin-Madison,Information Science,Bachelor's,40000,3.3,Competitive,https://ischool.wisc.edu
+University of Maryland,Computer Science,Bachelor's,41000,3.5,Highly Competitive,https://undergrad.cs.umd.edu
+University of Maryland,Information Science,Bachelor's,39000,3.3,Competitive,https://ischool.umd.edu
+University of Maryland,Data Science,Bachelor's,40000,3.4,Competitive,https://cmns.umd.edu
+Arizona State University,Computer Science,Bachelor's,33000,3.2,Moderately Competitive,https://scai.engineering.asu.edu
+Arizona State University,Software Engineering,Bachelor's,32000,3.1,Moderately Competitive,https://poly.engineering.asu.edu
+Arizona State University,Data Science,Bachelor's,32500,3.2,Moderately Competitive,https://degrees.apps.asu.edu
+University of Michigan,Computer Science,Bachelor's,57000,3.8,Highly Competitive,https://cse.engin.umich.edu
+University of Michigan,Data Science,Bachelor's,56000,3.7,Highly Competitive,https://lsa.umich.edu/stats
+University of Michigan,Information Science,Bachelor's,54000,3.5,Competitive,https://www.si.umich.edu
+Georgia Institute of Technology,Computer Science,Bachelor's,52000,3.8,Highly Competitive,https://www.cc.gatech.edu
+Georgia Institute of Technology,Data Science,Bachelor's,51000,3.7,Highly Competitive,https://www.gatech.edu
+Georgia Institute of Technology,Computational Media,Bachelor's,50000,3.5,Competitive,https://catalog.gatech.edu
+University of Texas at Austin,Computer Science,Bachelor's,47000,3.8,Highly Competitive,https://www.cs.utexas.edu
+University of Texas at Austin,Data Science,Bachelor's,46000,3.6,Highly Competitive,https://stat.utexas.edu
+University of Texas at Austin,Information Studies,Bachelor's,44000,3.4,Competitive,https://www.ischool.utexas.edu
+University of California Berkeley,Computer Science,Bachelor's,68000,3.9,Extremely Competitive,https://eecs.berkeley.edu
+University of California Berkeley,Data Science,Bachelor's,66000,3.8,Extremely Competitive,https://data.berkeley.edu
+University of California Berkeley,Statistics,Bachelor's,65000,3.7,Highly Competitive,https://statistics.berkeley.edu
+University of California Los Angeles,Computer Science,Bachelor's,66000,3.9,Extremely Competitive,https://www.cs.ucla.edu
+University of California Los Angeles,Data Theory,Bachelor's,64000,3.8,Highly Competitive,https://www.math.ucla.edu
+University of California Los Angeles,Statistics and Data Science,Bachelor's,64000,3.7,Highly Competitive,https://statistics.ucla.edu
