@@ -34,7 +34,7 @@ public class UniversityService {
                 .map(university -> {
                     Optional<Program> matchedProgram = findBestProgramMatch(university, major);
 
-                    Double fitScore = calculateFitScore(
+                    ScoreBreakdown scoreBreakdown = calculateScoreBreakdown(
                             university,
                             matchedProgram.orElse(null),
                             gpa,
@@ -47,6 +47,7 @@ public class UniversityService {
                     List<String> fitReasons = calculateFitReasons(
                             university,
                             matchedProgram.orElse(null),
+                            scoreBreakdown,
                             gpa,
                             international,
                             fall,
@@ -56,7 +57,7 @@ public class UniversityService {
 
                     return UniversitySearchResult.fromUniversity(
                             university,
-                            fitScore,
+                            scoreBreakdown,
                             fitReasons,
                             matchedProgram.orElse(null)
                     );
@@ -87,7 +88,7 @@ public class UniversityService {
                         .min(Comparator.comparing(Program::getMinimumRecommendedGpa)));
     }
 
-    private Double calculateFitScore(
+    private ScoreBreakdown calculateScoreBreakdown(
             University university,
             Program program,
             Double studentGpa,
@@ -96,20 +97,21 @@ public class UniversityService {
             Boolean wantsSpring,
             String major
     ) {
-        double score = 0.0;
-
-        score += calculateUniversityGpaScore(university, studentGpa);
-        score += calculateProgramGpaScore(program, studentGpa);
-        score += calculateMajorScore(program, major);
-        score += calculateInternationalScore(university, wantsInternational);
-        score += calculateTermScore(university, wantsFall, wantsSpring);
-
-        return Math.min(score, 100.0);
+        return new ScoreBreakdown(
+                calculateUniversityGpaScore(university, studentGpa),
+                calculateProgramGpaScore(program, studentGpa),
+                calculateMajorScore(program, major),
+                calculateInternationalScore(university, wantsInternational),
+                calculateTermScore(university, wantsFall, wantsSpring),
+                calculateCostScore(program),
+                calculateCompetitivenessScore(program)
+        );
     }
 
     private List<String> calculateFitReasons(
             University university,
             Program program,
+            ScoreBreakdown scoreBreakdown,
             Double studentGpa,
             Boolean wantsInternational,
             Boolean wantsFall,
@@ -118,37 +120,37 @@ public class UniversityService {
     ) {
         List<String> reasons = new ArrayList<>();
 
-        addUniversityGpaReason(reasons, university, studentGpa);
-        addProgramGpaReason(reasons, program, studentGpa);
-        addMajorReason(reasons, program, major);
-        addInternationalReason(reasons, university, wantsInternational);
-        addTermReasons(reasons, university, wantsFall, wantsSpring);
-        addCostReason(reasons, program);
-        addCompetitivenessReason(reasons, program);
-
-        if (reasons.isEmpty()) {
-            reasons.add("General match based on available university and program data");
-        }
+        addUniversityGpaReason(reasons, university, studentGpa, scoreBreakdown.getUniversityGpa());
+        addProgramGpaReason(reasons, program, studentGpa, scoreBreakdown.getProgramGpa());
+        addMajorReason(reasons, program, major, scoreBreakdown.getMajorMatch());
+        addInternationalReason(reasons, university, wantsInternational, scoreBreakdown.getInternational());
+        addTermReasons(reasons, university, wantsFall, wantsSpring, scoreBreakdown.getTermMatch());
+        addCostReason(reasons, program, scoreBreakdown.getCost());
+        addCompetitivenessReason(reasons, program, scoreBreakdown.getCompetitiveness());
 
         return reasons;
     }
 
     private Double calculateUniversityGpaScore(University university, Double studentGpa) {
         if (studentGpa == null || university.getMinGpa() == null) {
-            return 20.0;
+            return 12.0;
         }
 
         double difference = studentGpa - university.getMinGpa();
 
-        if (difference < 0) {
+        if (difference < -0.3) {
             return 0.0;
         }
 
-        if (difference >= 0.5) {
-            return 25.0;
+        if (difference < 0) {
+            return 6.0;
         }
 
-        return 15.0 + (difference / 0.5) * 10.0;
+        if (difference >= 0.5) {
+            return 18.0;
+        }
+
+        return 12.0 + (difference / 0.5) * 6.0;
     }
 
     private Double calculateProgramGpaScore(Program program, Double studentGpa) {
@@ -158,20 +160,24 @@ public class UniversityService {
 
         double difference = studentGpa - program.getMinimumRecommendedGpa();
 
-        if (difference < 0) {
+        if (difference < -0.3) {
             return 0.0;
         }
 
-        if (difference >= 0.5) {
-            return 25.0;
+        if (difference < 0) {
+            return 8.0;
         }
 
-        return 15.0 + (difference / 0.5) * 10.0;
+        if (difference >= 0.5) {
+            return 22.0;
+        }
+
+        return 14.0 + (difference / 0.5) * 8.0;
     }
 
     private Double calculateMajorScore(Program program, String major) {
         if (major == null || major.isBlank()) {
-            return 10.0;
+            return 8.0;
         }
 
         if (program == null || program.getMajorName() == null) {
@@ -194,7 +200,7 @@ public class UniversityService {
 
     private Double calculateInternationalScore(University university, Boolean wantsInternational) {
         if (wantsInternational == null) {
-            return 10.0;
+            return 8.0;
         }
 
         if (wantsInternational.equals(university.getAcceptsInternational())) {
@@ -205,11 +211,11 @@ public class UniversityService {
     }
 
     private Double calculateTermScore(University university, Boolean wantsFall, Boolean wantsSpring) {
-        double score = 0.0;
-
         if (wantsFall == null && wantsSpring == null) {
-            return 10.0;
+            return 8.0;
         }
+
+        double score = 0.0;
 
         if (Boolean.TRUE.equals(wantsFall) && Boolean.TRUE.equals(university.getAcceptsFall())) {
             score += 5.0;
@@ -222,84 +228,143 @@ public class UniversityService {
         return score;
     }
 
-    private void addUniversityGpaReason(List<String> reasons, University university, Double studentGpa) {
+    private Double calculateCostScore(Program program) {
+        if (program == null || program.getEstimatedAnnualCost() == null) {
+            return 5.0;
+        }
+
+        double cost = program.getEstimatedAnnualCost();
+
+        if (cost <= 35000) {
+            return 10.0;
+        }
+
+        if (cost <= 45000) {
+            return 8.0;
+        }
+
+        if (cost <= 55000) {
+            return 6.0;
+        }
+
+        if (cost <= 65000) {
+            return 4.0;
+        }
+
+        return 2.0;
+    }
+
+    private Double calculateCompetitivenessScore(Program program) {
+        if (program == null || program.getCompetitivenessLevel() == null) {
+            return 4.0;
+        }
+
+        String competitiveness = program.getCompetitivenessLevel().toLowerCase();
+
+        if (competitiveness.contains("moderately")) {
+            return 10.0;
+        }
+
+        if (competitiveness.contains("competitive") && !competitiveness.contains("highly") && !competitiveness.contains("extremely")) {
+            return 8.0;
+        }
+
+        if (competitiveness.contains("highly")) {
+            return 6.0;
+        }
+
+        if (competitiveness.contains("extremely")) {
+            return 4.0;
+        }
+
+        return 5.0;
+    }
+
+    private void addUniversityGpaReason(
+            List<String> reasons,
+            University university,
+            Double studentGpa,
+            Double score
+    ) {
         if (studentGpa == null || university.getMinGpa() == null) {
-            reasons.add("University GPA was not used as a primary filter");
+            reasons.add("University GPA contribution: " + score + " points because GPA was not provided or the school has no listed minimum.");
             return;
         }
 
         double difference = studentGpa - university.getMinGpa();
 
         if (difference < 0) {
-            reasons.add("Student GPA is below the university's listed minimum GPA");
+            reasons.add("University GPA contribution: " + score + " points because the student GPA is below the university minimum.");
         } else if (difference >= 0.5) {
-            reasons.add("Student GPA is well above the university's listed minimum GPA");
+            reasons.add("University GPA contribution: " + score + " points because the student GPA is well above the university minimum.");
         } else {
-            reasons.add("Student GPA meets the university's listed minimum GPA");
+            reasons.add("University GPA contribution: " + score + " points because the student GPA meets the university minimum.");
         }
     }
 
-    private void addProgramGpaReason(List<String> reasons, Program program, Double studentGpa) {
+    private void addProgramGpaReason(
+            List<String> reasons,
+            Program program,
+            Double studentGpa,
+            Double score
+    ) {
         if (program == null) {
-            reasons.add("No specific program match was found for this university");
+            reasons.add("Program GPA contribution: " + score + " points because no specific program match was found.");
             return;
         }
 
         if (studentGpa == null || program.getMinimumRecommendedGpa() == null) {
-            reasons.add("Program GPA recommendation was not available");
+            reasons.add("Program GPA contribution: " + score + " points because program GPA data is incomplete.");
             return;
         }
 
         double difference = studentGpa - program.getMinimumRecommendedGpa();
 
         if (difference < 0) {
-            reasons.add("Student GPA is below the recommended GPA for the matched program");
+            reasons.add("Program GPA contribution: " + score + " points because the student GPA is below the program recommendation.");
         } else if (difference >= 0.5) {
-            reasons.add("Student GPA is well above the recommended GPA for the matched program");
+            reasons.add("Program GPA contribution: " + score + " points because the student GPA is well above the program recommendation.");
         } else {
-            reasons.add("Student GPA is close to the recommended GPA for the matched program");
+            reasons.add("Program GPA contribution: " + score + " points because the student GPA is close to the program recommendation.");
         }
     }
 
-    private void addMajorReason(List<String> reasons, Program program, String major) {
+    private void addMajorReason(
+            List<String> reasons,
+            Program program,
+            String major,
+            Double score
+    ) {
         if (major == null || major.isBlank()) {
-            reasons.add("No major preference was entered, so the strongest available program was used");
+            reasons.add("Major match contribution: " + score + " points because no major preference was entered.");
             return;
         }
 
         if (program == null || program.getMajorName() == null) {
-            reasons.add("No program data matched the requested major");
+            reasons.add("Major match contribution: " + score + " points because no matching program data was available.");
             return;
         }
 
-        String requestedMajor = major.trim().toLowerCase();
-        String matchedMajor = program.getMajorName().toLowerCase();
-
-        if (matchedMajor.equals(requestedMajor)) {
-            reasons.add("Exact major match found: " + program.getMajorName());
-        } else if (matchedMajor.contains(requestedMajor) || requestedMajor.contains(matchedMajor)) {
-            reasons.add("Related major match found: " + program.getMajorName());
-        } else {
-            reasons.add("Closest available program used: " + program.getMajorName());
-        }
+        reasons.add("Major match contribution: " + score + " points for matched program: " + program.getMajorName() + ".");
     }
 
     private void addInternationalReason(
             List<String> reasons,
             University university,
-            Boolean wantsInternational
+            Boolean wantsInternational,
+            Double score
     ) {
         if (wantsInternational == null) {
-            reasons.add("International student preference was not specified");
+            reasons.add("International contribution: " + score + " points because international preference was not specified.");
             return;
         }
 
         if (Boolean.TRUE.equals(wantsInternational) && Boolean.TRUE.equals(university.getAcceptsInternational())) {
-            reasons.add("Accepts international transfer students");
+            reasons.add("International contribution: " + score + " points because the university accepts international transfers.");
         } else if (Boolean.FALSE.equals(wantsInternational)) {
-            reasons.add("International student acceptance was not required");
+            reasons.add("International contribution: " + score + " points because international acceptance was not required.");
         } else {
-            reasons.add("Does not match the international student preference");
+            reasons.add("International contribution: " + score + " points because the university does not match the international preference.");
         }
     }
 
@@ -307,45 +372,32 @@ public class UniversityService {
             List<String> reasons,
             University university,
             Boolean wantsFall,
-            Boolean wantsSpring
+            Boolean wantsSpring,
+            Double score
     ) {
         if (wantsFall == null && wantsSpring == null) {
-            reasons.add("Admission term preference was not specified");
+            reasons.add("Admission term contribution: " + score + " points because no term preference was specified.");
             return;
         }
 
-        if (Boolean.TRUE.equals(wantsFall)) {
-            if (Boolean.TRUE.equals(university.getAcceptsFall())) {
-                reasons.add("Supports fall transfer admission");
-            } else {
-                reasons.add("Does not list fall transfer admission");
-            }
-        }
-
-        if (Boolean.TRUE.equals(wantsSpring)) {
-            if (Boolean.TRUE.equals(university.getAcceptsSpring())) {
-                reasons.add("Supports spring transfer admission");
-            } else {
-                reasons.add("Does not list spring transfer admission");
-            }
-        }
+        reasons.add("Admission term contribution: " + score + " points based on fall/spring transfer availability.");
     }
 
-    private void addCostReason(List<String> reasons, Program program) {
+    private void addCostReason(List<String> reasons, Program program, Double score) {
         if (program == null || program.getEstimatedAnnualCost() == null) {
-            reasons.add("Program cost estimate is not available yet");
+            reasons.add("Cost contribution: " + score + " points because cost data is unavailable.");
             return;
         }
 
-        reasons.add("Estimated annual program cost: $" + Math.round(program.getEstimatedAnnualCost()));
+        reasons.add("Cost contribution: " + score + " points for estimated annual cost of $" + Math.round(program.getEstimatedAnnualCost()) + ".");
     }
 
-    private void addCompetitivenessReason(List<String> reasons, Program program) {
+    private void addCompetitivenessReason(List<String> reasons, Program program, Double score) {
         if (program == null || program.getCompetitivenessLevel() == null) {
-            reasons.add("Program competitiveness level is not available yet");
+            reasons.add("Competitiveness contribution: " + score + " points because competitiveness data is unavailable.");
             return;
         }
 
-        reasons.add("Program competitiveness: " + program.getCompetitivenessLevel());
+        reasons.add("Competitiveness contribution: " + score + " points for a " + program.getCompetitivenessLevel() + " program.");
     }
 }

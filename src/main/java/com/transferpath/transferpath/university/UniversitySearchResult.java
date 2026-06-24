@@ -21,6 +21,7 @@ public class UniversitySearchResult {
     private String transferRequirements;
 
     private Double fitScore;
+    private ScoreBreakdown scoreBreakdown;
     private List<String> fitReasons;
 
     private String matchedMajor;
@@ -45,6 +46,7 @@ public class UniversitySearchResult {
             String applicationPortal,
             String transferRequirements,
             Double fitScore,
+            ScoreBreakdown scoreBreakdown,
             List<String> fitReasons,
             String matchedMajor,
             String matchedDegreeLevel,
@@ -67,6 +69,7 @@ public class UniversitySearchResult {
         this.applicationPortal = applicationPortal;
         this.transferRequirements = transferRequirements;
         this.fitScore = fitScore;
+        this.scoreBreakdown = scoreBreakdown;
         this.fitReasons = fitReasons;
         this.matchedMajor = matchedMajor;
         this.matchedDegreeLevel = matchedDegreeLevel;
@@ -78,7 +81,7 @@ public class UniversitySearchResult {
 
     public static UniversitySearchResult fromUniversity(
             University university,
-            Double fitScore,
+            ScoreBreakdown scoreBreakdown,
             List<String> fitReasons,
             Program matchedProgram
     ) {
@@ -96,7 +99,8 @@ public class UniversitySearchResult {
                 university.getWebsiteUrl(),
                 university.getApplicationPortal(),
                 university.getTransferRequirements(),
-                fitScore,
+                roundScore(scoreBreakdown.total()),
+                scoreBreakdown,
                 fitReasons,
                 matchedProgram == null ? null : matchedProgram.getMajorName(),
                 matchedProgram == null ? null : matchedProgram.getDegreeLevel(),
@@ -105,6 +109,10 @@ public class UniversitySearchResult {
                 matchedProgram == null ? null : matchedProgram.getCompetitivenessLevel(),
                 matchedProgram == null ? null : matchedProgram.getProgramUrl()
         );
+    }
+
+    private static Double roundScore(Double score) {
+        return Math.round(score * 10.0) / 10.0;
     }
 
     public Long getId() {
@@ -161,6 +169,10 @@ public class UniversitySearchResult {
 
     public Double getFitScore() {
         return fitScore;
+    }
+
+    public ScoreBreakdown getScoreBreakdown() {
+        return scoreBreakdown;
     }
 
     public List<String> getFitReasons() {

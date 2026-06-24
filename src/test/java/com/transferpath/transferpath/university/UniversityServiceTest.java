@@ -49,7 +49,7 @@ class UniversityServiceTest {
         Program strongProgram = new Program(
                 "Computer Science",
                 "Bachelor's",
-                45000.0,
+                35000.0,
                 3.2,
                 "Competitive",
                 "https://example.com/strong-cs",
@@ -59,9 +59,9 @@ class UniversityServiceTest {
         Program weakerProgram = new Program(
                 "Computer Science",
                 "Bachelor's",
-                45000.0,
+                65000.0,
                 3.7,
-                "Highly Competitive",
+                "Extremely Competitive",
                 "https://example.com/weaker-cs",
                 weakerMatch
         );
@@ -145,10 +145,31 @@ class UniversityServiceTest {
         assertEquals(39000.0, result.getEstimatedAnnualCost());
         assertEquals("Competitive", result.getProgramCompetitiveness());
 
-        assertTrue(result.getFitReasons().contains("Student GPA is well above the university's listed minimum GPA"));
-        assertTrue(result.getFitReasons().contains("Student GPA is well above the recommended GPA for the matched program"));
-        assertTrue(result.getFitReasons().contains("Exact major match found: Computer Science"));
-        assertTrue(result.getFitReasons().contains("Accepts international transfer students"));
-        assertTrue(result.getFitReasons().contains("Supports fall transfer admission"));
+        assertNotNull(result.getScoreBreakdown());
+        assertTrue(result.getScoreBreakdown().getUniversityGpa() > 0);
+        assertTrue(result.getScoreBreakdown().getProgramGpa() > 0);
+        assertTrue(result.getScoreBreakdown().getMajorMatch() > 0);
+        assertTrue(result.getScoreBreakdown().getCost() > 0);
+        assertTrue(result.getFitScore() > 0);
+
+        assertTrue(
+                result.getFitReasons().stream()
+                        .anyMatch(reason -> reason.contains("University GPA contribution"))
+        );
+
+        assertTrue(
+                result.getFitReasons().stream()
+                        .anyMatch(reason -> reason.contains("Program GPA contribution"))
+        );
+
+        assertTrue(
+                result.getFitReasons().stream()
+                        .anyMatch(reason -> reason.contains("Major match contribution"))
+        );
+
+        assertTrue(
+                result.getFitReasons().stream()
+                        .anyMatch(reason -> reason.contains("Cost contribution"))
+        );
     }
 }
