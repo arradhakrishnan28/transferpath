@@ -7,8 +7,22 @@ import com.transferpath.transferpath.university.UniversityRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class DataLoader implements CommandLineRunner {
+
+    private static final Path UNIVERSITIES_CSV =
+            Path.of("data", "processed", "universities_clean.csv");
+
+    private static final Path PROGRAMS_CSV =
+            Path.of("data", "processed", "programs_clean.csv");
 
     private final UniversityRepository universityRepository;
     private final ProgramRepository programRepository;
@@ -23,244 +37,181 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (universityRepository.count() == 0) {
-            seedUniversitiesAndPrograms();
-        } else if (programRepository.count() == 0) {
-            seedProgramsForExistingUniversities();
+        if (!Files.exists(UNIVERSITIES_CSV) || !Files.exists(PROGRAMS_CSV)) {
+            return;
+        }
+
+        Map<String, University> universitiesByName = importUniversities();
+        importPrograms(universitiesByName);
+    }
+
+    private Map<String, University> importUniversities() {
+        Map<String, University> universitiesByName = loadExistingUniversitiesByName();
+
+        List<Map<String, String>> rows = readCsv(UNIVERSITIES_CSV);
+
+        for (Map<String, String> row : rows) {
+            String name = row.get("name");
+
+            if (universitiesByName.containsKey(normalizeKey(name))) {
+                continue;
+            }
+
+            University university = new University(
+                    name,
+                    row.get("country"),
+                    parseDouble(row.get("min_gpa")),
+                    row.get("state"),
+                    row.get("city"),
+                    row.get("application_deadline"),
+                    row.get("website_url"),
+                    parseBoolean(row.get("accepts_international")),
+                    parseBoolean(row.get("accepts_fall")),
+                    parseBoolean(row.get("accepts_spring")),
+                    row.get("application_portal"),
+                    row.get("transfer_requirements")
+            );
+
+            University savedUniversity = universityRepository.save(university);
+            universitiesByName.put(normalizeKey(savedUniversity.getName()), savedUniversity);
+        }
+
+        return universitiesByName;
+    }
+
+    private void importPrograms(Map<String, University> universitiesByName) {
+        List<Map<String, String>> rows = readCsv(PROGRAMS_CSV);
+
+        for (Map<String, String> row : rows) {
+            University university = universitiesByName.get(normalizeKey(row.get("university_name")));
+
+            if (university == null) {
+                throw new IllegalStateException(
+                        "Program references unknown university: " + row.get("university_name")
+                );
+            }
+
+            if (programAlreadyExists(university, row.get("major_name"), row.get("degree_level"))) {
+                continue;
+            }
+
+            Program program = new Program(
+                    row.get("major_name"),
+                    row.get("degree_level"),
+                    parseDouble(row.get("estimated_annual_cost")),
+                    parseDouble(row.get("minimum_recommended_gpa")),
+                    row.get("competitiveness_level"),
+                    row.get("program_url"),
+                    university
+            );
+
+            programRepository.save(program);
         }
     }
 
-    private void seedUniversitiesAndPrograms() {
-        University uiuc = universityRepository.save(
-                new University(
-                        "University of Illinois Urbana-Champaign",
-                        "USA",
-                        3.5,
-                        "Illinois",
-                        "Urbana-Champaign",
-                        "March 1",
-                        "https://www.admissions.illinois.edu/apply/transfer",
-                        true,
-                        true,
-                        false,
-                        "University application",
-                        "Strong GPA, major prerequisites, college coursework"
-                )
-        );
+    private Map<String, University> loadExistingUniversitiesByName() {
+        Map<String, University> universitiesByName = new HashMap<>();
 
-        University purdue = universityRepository.save(
-                new University(
-                        "Purdue University",
-                        "USA",
-                        3.4,
-                        "Indiana",
-                        "West Lafayette",
-                        "June 1",
-                        "https://www.admissions.purdue.edu",
-                        true,
-                        true,
-                        false,
-                        "University application",
-                        "Calculus, programming courses preferred"
-                )
-        );
+        for (University university : universityRepository.findAll()) {
+            universitiesByName.put(normalizeKey(university.getName()), university);
+        }
 
-        University wisconsin = universityRepository.save(
-                new University(
-                        "University of Wisconsin-Madison",
-                        "USA",
-                        3.5,
-                        "Wisconsin",
-                        "Madison",
-                        "February 1",
-                        "https://admissions.wisc.edu",
-                        true,
-                        true,
-                        false,
-                        "University application",
-                        "Strong academic record"
-                )
-        );
-
-        University maryland = universityRepository.save(
-                new University(
-                        "University of Maryland",
-                        "USA",
-                        3.4,
-                        "Maryland",
-                        "College Park",
-                        "March 1",
-                        "https://admissions.umd.edu",
-                        true,
-                        true,
-                        false,
-                        "University application",
-                        "Competitive transfer applicant"
-                )
-        );
-
-        University arizonaState = universityRepository.save(
-                new University(
-                        "Arizona State University",
-                        "USA",
-                        3.0,
-                        "Arizona",
-                        "Tempe",
-                        "Rolling",
-                        "https://admission.asu.edu",
-                        true,
-                        true,
-                        true,
-                        "University application",
-                        "College coursework required"
-                )
-        );
-
-        seedPrograms(uiuc, purdue, wisconsin, maryland, arizonaState);
+        return universitiesByName;
     }
 
-    private void seedProgramsForExistingUniversities() {
-        University uiuc = universityRepository.findByCountry("USA").stream()
-                .filter(university -> university.getName().equals("University of Illinois Urbana-Champaign"))
-                .findFirst()
-                .orElseThrow();
-
-        University purdue = universityRepository.findByCountry("USA").stream()
-                .filter(university -> university.getName().equals("Purdue University"))
-                .findFirst()
-                .orElseThrow();
-
-        University wisconsin = universityRepository.findByCountry("USA").stream()
-                .filter(university -> university.getName().equals("University of Wisconsin-Madison"))
-                .findFirst()
-                .orElseThrow();
-
-        University maryland = universityRepository.findByCountry("USA").stream()
-                .filter(university -> university.getName().equals("University of Maryland"))
-                .findFirst()
-                .orElseThrow();
-
-        University arizonaState = universityRepository.findByCountry("USA").stream()
-                .filter(university -> university.getName().equals("Arizona State University"))
-                .findFirst()
-                .orElseThrow();
-
-        seedPrograms(uiuc, purdue, wisconsin, maryland, arizonaState);
-    }
-
-    private void seedPrograms(
-            University uiuc,
-            University purdue,
-            University wisconsin,
-            University maryland,
-            University arizonaState
+    private boolean programAlreadyExists(
+            University university,
+            String majorName,
+            String degreeLevel
     ) {
-        programRepository.save(
-                new Program(
-                        "Computer Science",
-                        "Bachelor's",
-                        45000.0,
-                        3.7,
-                        "Highly Competitive",
-                        "https://cs.illinois.edu",
-                        uiuc
-                )
-        );
+        return programRepository.findByUniversityId(university.getId())
+                .stream()
+                .anyMatch(program ->
+                        normalizeKey(program.getMajorName()).equals(normalizeKey(majorName))
+                                && normalizeKey(program.getDegreeLevel()).equals(normalizeKey(degreeLevel))
+                );
+    }
 
-        programRepository.save(
-                new Program(
-                        "Computer Science",
-                        "Bachelor's",
-                        42000.0,
-                        3.6,
-                        "Highly Competitive",
-                        "https://www.cs.purdue.edu",
-                        purdue
-                )
-        );
+    private List<Map<String, String>> readCsv(Path path) {
+        try {
+            List<String> lines = Files.readAllLines(path);
 
-        programRepository.save(
-                new Program(
-                        "Computer Science",
-                        "Bachelor's",
-                        43000.0,
-                        3.6,
-                        "Highly Competitive",
-                        "https://www.cs.wisc.edu",
-                        wisconsin
-                )
-        );
+            if (lines.isEmpty()) {
+                return List.of();
+            }
 
-        programRepository.save(
-                new Program(
-                        "Computer Science",
-                        "Bachelor's",
-                        41000.0,
-                        3.5,
-                        "Highly Competitive",
-                        "https://undergrad.cs.umd.edu",
-                        maryland
-                )
-        );
+            List<String> headers = parseCsvLine(lines.get(0));
+            List<Map<String, String>> rows = new ArrayList<>();
 
-        programRepository.save(
-                new Program(
-                        "Computer Science",
-                        "Bachelor's",
-                        33000.0,
-                        3.2,
-                        "Moderately Competitive",
-                        "https://scai.engineering.asu.edu",
-                        arizonaState
-                )
-        );
+            for (int index = 1; index < lines.size(); index++) {
+                String line = lines.get(index);
 
-        programRepository.save(
-                new Program(
-                        "Data Science",
-                        "Bachelor's",
-                        44000.0,
-                        3.6,
-                        "Competitive",
-                        "https://ischool.illinois.edu",
-                        uiuc
-                )
-        );
+                if (line.isBlank()) {
+                    continue;
+                }
 
-        programRepository.save(
-                new Program(
-                        "Data Science",
-                        "Bachelor's",
-                        40000.0,
-                        3.4,
-                        "Competitive",
-                        "https://www.purdue.edu",
-                        purdue
-                )
-        );
+                List<String> values = parseCsvLine(line);
+                Map<String, String> row = new HashMap<>();
 
-        programRepository.save(
-                new Program(
-                        "Information Science",
-                        "Bachelor's",
-                        39000.0,
-                        3.3,
-                        "Competitive",
-                        "https://ischool.umd.edu",
-                        maryland
-                )
-        );
+                for (int columnIndex = 0; columnIndex < headers.size(); columnIndex++) {
+                    String header = headers.get(columnIndex);
+                    String value = columnIndex < values.size() ? values.get(columnIndex) : "";
+                    row.put(header, value);
+                }
 
-        programRepository.save(
-                new Program(
-                        "Software Engineering",
-                        "Bachelor's",
-                        32000.0,
-                        3.1,
-                        "Moderately Competitive",
-                        "https://poly.engineering.asu.edu",
-                        arizonaState
-                )
-        );
+                rows.add(row);
+            }
+
+            return rows;
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not read CSV file: " + path, exception);
+        }
+    }
+
+    private List<String> parseCsvLine(String line) {
+        List<String> values = new ArrayList<>();
+        StringBuilder currentValue = new StringBuilder();
+        boolean insideQuotes = false;
+
+        for (int index = 0; index < line.length(); index++) {
+            char currentCharacter = line.charAt(index);
+
+            if (currentCharacter == '"') {
+                insideQuotes = !insideQuotes;
+            } else if (currentCharacter == ',' && !insideQuotes) {
+                values.add(currentValue.toString().trim());
+                currentValue.setLength(0);
+            } else {
+                currentValue.append(currentCharacter);
+            }
+        }
+
+        values.add(currentValue.toString().trim());
+
+        return values;
+    }
+
+    private String normalizeKey(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value.trim().toLowerCase();
+    }
+
+    private Double parseDouble(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return Double.parseDouble(value);
+    }
+
+    private Boolean parseBoolean(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+
+        return Boolean.parseBoolean(value);
     }
 }
