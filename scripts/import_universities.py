@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
@@ -75,10 +76,33 @@ class DatasetValidationError(Exception):
 
 
 def main() -> None:
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    args = parse_args()
+    run_pipeline(validate_only=args.validate_only)
 
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Validate and clean TransferPath university/program CSV datasets."
+    )
+
+    parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        help="Validate raw data without writing processed files.",
+    )
+
+    return parser.parse_args()
+
+
+def run_pipeline(validate_only: bool) -> None:
     universities = load_universities(RAW_UNIVERSITIES_PATH)
     programs = load_programs(RAW_PROGRAMS_PATH, universities)
+
+    if validate_only:
+        print_validation_summary(universities, programs)
+        return
+
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
     write_clean_universities(universities, CLEAN_UNIVERSITIES_PATH)
     write_clean_programs(programs, CLEAN_PROGRAMS_PATH)
@@ -88,6 +112,15 @@ def main() -> None:
     print(f"Clean universities: {CLEAN_UNIVERSITIES_PATH}")
     print(f"Clean programs: {CLEAN_PROGRAMS_PATH}")
     print(f"Import report: {IMPORT_REPORT_PATH}")
+
+
+def print_validation_summary(
+    universities: list[UniversityRow],
+    programs: list[ProgramRow],
+) -> None:
+    print("Dataset validation completed successfully.")
+    print(f"Universities validated: {len(universities)}")
+    print(f"Programs validated: {len(programs)}")
 
 
 def load_universities(path: Path) -> list[UniversityRow]:
