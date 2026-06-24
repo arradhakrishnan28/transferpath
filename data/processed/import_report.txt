@@ -1,0 +1,20 @@
+TransferPath Import Report
+==========================
+
+Universities processed: 10
+Programs processed: 30
+Average university minimum GPA: 3.5
+Average program recommended GPA: 3.563333333333333333333333333
+Average estimated annual program cost: $48,217
+
+Program count by university:
+- Arizona State University: 3
+- Georgia Institute of Technology: 3
+- Purdue University: 3
+- University of California Berkeley: 3
+- University of California Los Angeles: 3
+- University of Illinois Urbana-Champaign: 3
+- University of Maryland: 3
+- University of Michigan: 3
+- University of Texas at Austin: 3
+- University of Wisconsin-Madison: 3
