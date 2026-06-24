@@ -95,7 +95,7 @@
         table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 1700px;
+            min-width: 1900px;
             background-color: white;
         }
 
@@ -120,13 +120,19 @@
             color: #1f4e79;
         }
 
-        .fit-reasons {
+        .fit-reasons,
+        .score-breakdown {
             margin: 0;
             padding-left: 18px;
         }
 
-        .fit-reasons li {
+        .fit-reasons li,
+        .score-breakdown li {
             margin-bottom: 4px;
+        }
+
+        .score-breakdown strong {
+            color: #1f4e79;
         }
     </style>
 </head>
@@ -200,6 +206,7 @@
         <tr>
             <th>Name</th>
             <th>Fit Score</th>
+            <th>Score Breakdown</th>
             <th>Matched Major</th>
             <th>Program GPA</th>
             <th>Estimated Cost</th>
@@ -220,7 +227,7 @@
         </thead>
         <tbody id="results">
         <tr>
-            <td colspan="18">No results yet.</td>
+            <td colspan="19">No results yet.</td>
         </tr>
         </tbody>
     </table>
@@ -320,7 +327,7 @@
         const resultsTable = document.getElementById("results");
         resultsTable.innerHTML = `
             <tr>
-                <td colspan="18">No results yet.</td>
+                <td colspan="19">No results yet.</td>
             </tr>
         `;
 
@@ -422,6 +429,24 @@
         return `<ul class="fit-reasons">${items}</ul>`;
     }
 
+    function buildScoreBreakdown(scoreBreakdown) {
+        if (!scoreBreakdown) {
+            return "N/A";
+        }
+
+        return `
+            <ul class="score-breakdown">
+                <li><strong>University GPA:</strong> ${formatScore(scoreBreakdown.universityGpa)}</li>
+                <li><strong>Program GPA:</strong> ${formatScore(scoreBreakdown.programGpa)}</li>
+                <li><strong>Major:</strong> ${formatScore(scoreBreakdown.majorMatch)}</li>
+                <li><strong>International:</strong> ${formatScore(scoreBreakdown.international)}</li>
+                <li><strong>Term:</strong> ${formatScore(scoreBreakdown.termMatch)}</li>
+                <li><strong>Cost:</strong> ${formatScore(scoreBreakdown.cost)}</li>
+                <li><strong>Competitiveness:</strong> ${formatScore(scoreBreakdown.competitiveness)}</li>
+            </ul>
+        `;
+    }
+
     function buildLink(url, label) {
         if (!url) {
             return "N/A";
@@ -437,7 +462,7 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="18">No universities found.</td>
+                    <td colspan="19">No universities found.</td>
                 </tr>
             `;
             return;
@@ -448,11 +473,13 @@
             const programLink = buildLink(university.programUrl, "View program");
             const location = `${safeText(university.city)}, ${safeText(university.state)}`;
             const fitReasonsList = buildFitReasonsList(university.fitReasons);
+            const scoreBreakdown = buildScoreBreakdown(university.scoreBreakdown);
 
             const row = `
                 <tr>
                     <td>${safeText(university.name)}</td>
                     <td class="fit-score">${formatScore(university.fitScore)}</td>
+                    <td>${scoreBreakdown}</td>
                     <td>${safeText(university.matchedMajor)}</td>
                     <td>${safeText(university.minimumRecommendedProgramGpa)}</td>
                     <td>${formatMoney(university.estimatedAnnualCost)}</td>
