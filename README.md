@@ -8,18 +8,18 @@ The project combines a Java backend, PostgreSQL persistence, Flyway database mig
 
 - Search universities by country, GPA, international eligibility, admission term, and intended major
 - Rank schools using a fit score based on:
-    - university minimum GPA
-    - program recommended GPA
-    - major match
-    - international transfer support
-    - fall/spring transfer availability
-    - program competitiveness
+  - university minimum GPA
+  - program recommended GPA
+  - major match
+  - international transfer support
+  - fall/spring transfer availability
+  - program competitiveness
 - View major-specific data:
-    - matched major
-    - program recommended GPA
-    - estimated annual cost
-    - competitiveness level
-    - program URL
+  - matched major
+  - program recommended GPA
+  - estimated annual cost
+  - competitiveness level
+  - program URL
 - Load university and program data from processed CSV files
 - Validate and clean raw CSV data using a Python pipeline
 - Manage database schema through Flyway migrations
@@ -71,3 +71,67 @@ data/
 
 scripts/
   import_universities.py
+```
+
+## Running the Data Pipeline
+
+From the project root:
+
+```bash
+python3 scripts/import_universities.py
+```
+
+This validates the raw CSV files and generates clean processed files:
+
+```text
+data/processed/universities_clean.csv
+data/processed/programs_clean.csv
+data/processed/import_report.txt
+```
+
+## Running the Application
+
+Make sure PostgreSQL is running and your `application.properties` points to your local database.
+
+Then run:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Open:
+
+```text
+http://localhost:8080
+```
+
+Useful API endpoints:
+
+```text
+GET /universities
+GET /programs
+GET /universities/search/filter?country=USA&gpa=3.8&international=true&fall=true&major=Computer%20Science
+```
+
+## Testing
+
+Run:
+
+```bash
+./mvnw test
+```
+
+## Data Notes
+
+The current dataset is an MVP-scale curated dataset used to validate the ranking system, import pipeline, and user experience.
+
+Future versions will expand the dataset with larger public sources, richer source attribution, transfer requirement parsing, school comparison features, and AI-assisted explanation support.
+
+## Roadmap
+
+- Expand the dataset with more universities and program-level transfer information
+- Add school comparison views
+- Add transfer requirement parsing
+- Improve the fit score with more transparent weighting
+- Add AI-assisted fit explanations
+- Add deployment so TransferPath can be used publicly
