@@ -24,6 +24,34 @@ The project combines a Java backend, PostgreSQL persistence, Flyway database mig
 - Validate and clean raw CSV data using a Python pipeline
 - Manage database schema through Flyway migrations
 
+## Ranking Model
+
+TransferPath ranks universities using a weighted fit score from 0 to 100. The score is designed to explain not just which schools match a student, but why they match.
+
+Each result includes a `fitScore`, a detailed `scoreBreakdown`, and human-readable `fitReasons`.
+
+| Component | Max Points | What It Measures |
+| --- | ---: | --- |
+| University GPA | 18 | How the student's GPA compares with the university's minimum transfer GPA |
+| Program GPA | 22 | How the student's GPA compares with the matched major/program GPA recommendation |
+| Major Match | 20 | Whether the requested major matches an available program |
+| International Support | 10 | Whether the university accepts international transfer students |
+| Admission Term | 10 | Whether the university supports the requested fall or spring transfer term |
+| Cost | 10 | How affordable the matched program is relative to other options |
+| Competitiveness | 10 | How selective or competitive the matched program is |
+
+The final score is computed as:
+
+```text
+fitScore =
+  universityGpaScore
+  + programGpaScore
+  + majorMatchScore
+  + internationalScore
+  + termMatchScore
+  + costScore
+  + competitivenessScore
+
 ## Tech Stack
 
 - Java 21
