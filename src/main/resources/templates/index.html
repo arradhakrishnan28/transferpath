@@ -309,6 +309,41 @@
             color: var(--blue);
         }
 
+        .fit-label {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .fit-excellent {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .fit-strong {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .fit-moderate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .fit-reach {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .fit-high-reach,
+        .fit-unknown {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .pill {
             display: inline-block;
             padding: 4px 8px;
@@ -736,6 +771,58 @@
         return Number(value).toFixed(1);
     }
 
+    function fitLabel(score) {
+        if (score === null || score === undefined) {
+            return "Unknown";
+        }
+
+        const numericScore = Number(score);
+
+        if (numericScore >= 90) {
+            return "Excellent Fit";
+        }
+
+        if (numericScore >= 80) {
+            return "Strong Fit";
+        }
+
+        if (numericScore >= 70) {
+            return "Moderate Fit";
+        }
+
+        if (numericScore >= 60) {
+            return "Reach";
+        }
+
+        return "High Reach";
+    }
+
+    function fitLabelClass(score) {
+        if (score === null || score === undefined) {
+            return "fit-unknown";
+        }
+
+        const numericScore = Number(score);
+
+        if (numericScore >= 90) {
+            return "fit-excellent";
+        }
+
+        if (numericScore >= 80) {
+            return "fit-strong";
+        }
+
+        if (numericScore >= 70) {
+            return "fit-moderate";
+        }
+
+        if (numericScore >= 60) {
+            return "fit-reach";
+        }
+
+        return "fit-high-reach";
+    }
+
     function formatMoney(value) {
         if (value === null || value === undefined) {
             return "N/A";
@@ -821,7 +908,11 @@
                         >
                     </td>
                     <td>${safeText(university.name)}</td>
-                    <td class="fit-score">${formatScore(university.fitScore)}</td>
+                    <td class="fit-score">
+                    ${formatScore(university.fitScore)}
+                    <br>
+                    <span class="fit-label ${fitLabelClass(university.fitScore)}">${fitLabel(university.fitScore)}</span>
+                    </td>
                     <td>${scoreBreakdown}</td>
                     <td>${safeText(university.matchedMajor)}</td>
                     <td>${safeText(university.minimumRecommendedProgramGpa)}</td>
