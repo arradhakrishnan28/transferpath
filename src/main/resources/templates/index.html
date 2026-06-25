@@ -213,6 +213,7 @@
             <th>Competitiveness</th>
             <th>Program Link</th>
             <th>Fit Reasons</th>
+            <th>Requirement Summary</th>
             <th>Location</th>
             <th>Country</th>
             <th>University GPA</th>
@@ -462,7 +463,7 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="19">No universities found.</td>
+                    <td colspan="20">No universities found.</td>
                 </tr>
             `;
             return;
@@ -473,6 +474,9 @@
             const programLink = buildLink(university.programUrl, "View program");
             const location = `${safeText(university.city)}, ${safeText(university.state)}`;
             const fitReasonsList = buildFitReasonsList(university.fitReasons);
+            const requirementSummary = university.transferRequirementAnalysis
+                ? safeText(university.transferRequirementAnalysis.summary)
+                : "N/A";
             const scoreBreakdown = buildScoreBreakdown(university.scoreBreakdown);
 
             const row = `
@@ -486,6 +490,7 @@
                     <td>${safeText(university.programCompetitiveness)}</td>
                     <td>${programLink}</td>
                     <td>${fitReasonsList}</td>
+                    <td>${requirementSummary}</td>
                     <td>${location}</td>
                     <td>${safeText(university.country)}</td>
                     <td>${safeText(university.minGpa)}</td>
