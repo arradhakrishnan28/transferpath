@@ -19,10 +19,14 @@ The project combines a Java backend, PostgreSQL persistence, Flyway database mig
   - program recommended GPA
   - estimated annual cost
   - competitiveness level
-  - program URL
-- Load university and program data from processed CSV files
-- Validate and clean raw CSV data using a Python pipeline
-- Manage database schema through Flyway migrations
+  - program URL 
+  - Load university and program data from processed CSV files 
+  - Validate and clean raw CSV data using a Python pipeline 
+  - Manage database schema through Flyway migrations
+- Sort search results by fit score, estimated cost, program GPA, deadline, and school name
+- Compare up to four universities side by side across fit score, major match, cost, GPA expectations, deadlines, and requirement summaries
+- Display score quality labels such as Excellent Fit, Strong Fit, Moderate Fit, Reach, and High Reach
+- Show parsed transfer requirement summaries instead of only raw requirement text
 
 ## Ranking Model
 
@@ -100,6 +104,13 @@ data/
 scripts/
   import_universities.py
 ```
+## Frontend Experience
+
+The TransferPath frontend is designed as an interactive search and comparison dashboard.
+
+Users can search by transfer profile, review ranked university matches, sort by key metrics, and compare multiple schools side by side. The interface also surfaces explainability features directly in the results table, including fit score labels, score breakdowns, fit reasons, and parsed transfer requirement summaries.
+
+This keeps the application useful as both a decision-support tool and a technical demonstration of full-stack engineering.
 
 ## Running the Data Pipeline
 
