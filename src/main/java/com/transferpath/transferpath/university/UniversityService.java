@@ -12,13 +12,16 @@ public class UniversityService {
 
     private final UniversityRepository universityRepository;
     private final ProgramRepository programRepository;
+    private final TransferRequirementParser transferRequirementParser;
 
     public UniversityService(
             UniversityRepository universityRepository,
-            ProgramRepository programRepository
+            ProgramRepository programRepository,
+            TransferRequirementParser transferRequirementParser
     ) {
         this.universityRepository = universityRepository;
         this.programRepository = programRepository;
+        this.transferRequirementParser = transferRequirementParser;
     }
 
     public List<UniversitySearchResult> searchUniversities(
@@ -55,11 +58,15 @@ public class UniversityService {
                             major
                     );
 
+                    TransferRequirementAnalysis requirementAnalysis =
+                            transferRequirementParser.analyze(university.getTransferRequirements());
+
                     return UniversitySearchResult.fromUniversity(
                             university,
                             scoreBreakdown,
                             fitReasons,
-                            matchedProgram.orElse(null)
+                            matchedProgram.orElse(null),
+                            requirementAnalysis
                     );
                 })
                 .sorted(Comparator.comparing(UniversitySearchResult::getFitScore).reversed())
@@ -265,7 +272,9 @@ public class UniversityService {
             return 10.0;
         }
 
-        if (competitiveness.contains("competitive") && !competitiveness.contains("highly") && !competitiveness.contains("extremely")) {
+        if (competitiveness.contains("competitive")
+                && !competitiveness.contains("highly")
+                && !competitiveness.contains("extremely")) {
             return 8.0;
         }
 

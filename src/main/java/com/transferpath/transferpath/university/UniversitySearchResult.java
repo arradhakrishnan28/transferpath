@@ -19,6 +19,7 @@ public class UniversitySearchResult {
     private String websiteUrl;
     private String applicationPortal;
     private String transferRequirements;
+    private TransferRequirementAnalysis transferRequirementAnalysis;
 
     private Double fitScore;
     private ScoreBreakdown scoreBreakdown;
@@ -45,6 +46,7 @@ public class UniversitySearchResult {
             String websiteUrl,
             String applicationPortal,
             String transferRequirements,
+            TransferRequirementAnalysis transferRequirementAnalysis,
             Double fitScore,
             ScoreBreakdown scoreBreakdown,
             List<String> fitReasons,
@@ -68,6 +70,7 @@ public class UniversitySearchResult {
         this.websiteUrl = websiteUrl;
         this.applicationPortal = applicationPortal;
         this.transferRequirements = transferRequirements;
+        this.transferRequirementAnalysis = transferRequirementAnalysis;
         this.fitScore = fitScore;
         this.scoreBreakdown = scoreBreakdown;
         this.fitReasons = fitReasons;
@@ -85,6 +88,16 @@ public class UniversitySearchResult {
             List<String> fitReasons,
             Program matchedProgram
     ) {
+        return fromUniversity(university, scoreBreakdown, fitReasons, matchedProgram, null);
+    }
+
+    public static UniversitySearchResult fromUniversity(
+            University university,
+            ScoreBreakdown scoreBreakdown,
+            List<String> fitReasons,
+            Program matchedProgram,
+            TransferRequirementAnalysis transferRequirementAnalysis
+    ) {
         return new UniversitySearchResult(
                 university.getId(),
                 university.getName(),
@@ -99,6 +112,7 @@ public class UniversitySearchResult {
                 university.getWebsiteUrl(),
                 university.getApplicationPortal(),
                 university.getTransferRequirements(),
+                transferRequirementAnalysis,
                 roundScore(scoreBreakdown.total()),
                 scoreBreakdown,
                 fitReasons,
@@ -165,6 +179,10 @@ public class UniversitySearchResult {
 
     public String getTransferRequirements() {
         return transferRequirements;
+    }
+
+    public TransferRequirementAnalysis getTransferRequirementAnalysis() {
+        return transferRequirementAnalysis;
     }
 
     public Double getFitScore() {

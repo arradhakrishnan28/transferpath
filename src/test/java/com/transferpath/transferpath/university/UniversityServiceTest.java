@@ -13,8 +13,13 @@ class UniversityServiceTest {
     void searchUniversitiesReturnsResultsSortedByFitScoreDescending() {
         UniversityRepository universityRepository = mock(UniversityRepository.class);
         ProgramRepository programRepository = mock(ProgramRepository.class);
+        TransferRequirementParser transferRequirementParser = new TransferRequirementParser();
 
-        UniversityService service = new UniversityService(universityRepository, programRepository);
+        UniversityService service = new UniversityService(
+                universityRepository,
+                programRepository,
+                transferRequirementParser
+        );
 
         University strongMatch = new University(
                 "Strong Match University",
@@ -28,7 +33,7 @@ class UniversityServiceTest {
                 true,
                 true,
                 "University application",
-                "Strong transfer profile"
+                "Strong GPA, major prerequisites, and rigorous college coursework"
         );
 
         University weakerMatch = new University(
@@ -43,7 +48,7 @@ class UniversityServiceTest {
                 true,
                 false,
                 "University application",
-                "Competitive transfer profile"
+                "Competitive transfer applicant with strong academic record"
         );
 
         Program strongProgram = new Program(
@@ -87,14 +92,22 @@ class UniversityServiceTest {
         assertEquals(2, results.size());
         assertEquals("Strong Match University", results.get(0).getName());
         assertTrue(results.get(0).getFitScore() >= results.get(1).getFitScore());
+
+        assertNotNull(results.get(0).getTransferRequirementAnalysis());
+        assertFalse(results.get(0).getTransferRequirementAnalysis().getAcademicSignals().isEmpty());
     }
 
     @Test
-    void searchUniversitiesIncludesFitReasonsAndProgramData() {
+    void searchUniversitiesIncludesFitReasonsProgramDataAndRequirementAnalysis() {
         UniversityRepository universityRepository = mock(UniversityRepository.class);
         ProgramRepository programRepository = mock(ProgramRepository.class);
+        TransferRequirementParser transferRequirementParser = new TransferRequirementParser();
 
-        UniversityService service = new UniversityService(universityRepository, programRepository);
+        UniversityService service = new UniversityService(
+                universityRepository,
+                programRepository,
+                transferRequirementParser
+        );
 
         University university = new University(
                 "Reason Test University",
@@ -108,7 +121,7 @@ class UniversityServiceTest {
                 true,
                 false,
                 "University application",
-                "Good academic standing"
+                "Calculus and programming courses preferred. Strong GPA and major preparation recommended."
         );
 
         Program program = new Program(
@@ -151,6 +164,23 @@ class UniversityServiceTest {
         assertTrue(result.getScoreBreakdown().getMajorMatch() > 0);
         assertTrue(result.getScoreBreakdown().getCost() > 0);
         assertTrue(result.getFitScore() > 0);
+
+        assertNotNull(result.getTransferRequirementAnalysis());
+        assertTrue(
+                result.getTransferRequirementAnalysis()
+                        .getRecommendedCourses()
+                        .contains("Calculus")
+        );
+        assertTrue(
+                result.getTransferRequirementAnalysis()
+                        .getRecommendedCourses()
+                        .contains("Programming")
+        );
+        assertTrue(
+                result.getTransferRequirementAnalysis()
+                        .getSummary()
+                        .contains("Recommends")
+        );
 
         assertTrue(
                 result.getFitReasons().stream()
