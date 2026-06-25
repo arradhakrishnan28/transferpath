@@ -5,78 +5,188 @@
     <title>TransferPath</title>
 
     <style>
+        :root {
+            --ink: #172033;
+            --muted: #667085;
+            --border: #d7dce5;
+            --panel: #ffffff;
+            --page: #f4f7fb;
+            --blue: #174a7c;
+            --blue-dark: #0f355a;
+            --green: #0f766e;
+            --amber: #b45309;
+            --soft-blue: #e8f1fb;
+            --soft-green: #e7f6f3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
             font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f7f9fc;
-            color: #222222;
         }
 
-        h1 {
-            color: #1f4e79;
+        .app-header {
+            background: #10243d;
+            color: white;
+            padding: 22px 40px;
+            border-bottom: 1px solid #0b1a2d;
         }
 
-        .search-box {
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #dddddd;
-            max-width: 700px;
-            margin-bottom: 30px;
+        .app-header h1 {
+            margin: 0;
+            font-size: 32px;
+            letter-spacing: 0;
+        }
+
+        .app-header p {
+            margin: 8px 0 0;
+            color: #c9d7e8;
+            max-width: 760px;
+            line-height: 1.5;
+        }
+
+        .page {
+            padding: 28px 40px 44px;
+        }
+
+        .search-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(16, 36, 61, 0.06);
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 18px;
+            align-items: end;
         }
 
         label {
-            display: inline-block;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            font-weight: bold;
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+            color: #263248;
         }
 
         input,
         select {
-            padding: 8px;
-            width: 250px;
-            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid #aeb7c5;
+            border-radius: 6px;
+            background: white;
+            color: var(--ink);
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 3px solid #cfe2ff;
+            border-color: var(--blue);
+        }
+
+        .checkbox-row {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            padding-bottom: 9px;
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            font-weight: 700;
         }
 
         input[type="checkbox"] {
             width: auto;
-            margin-right: 6px;
+            margin: 0;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         button {
-            padding: 10px 18px;
-            background-color: #1f4e79;
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--blue);
             color: white;
-            border: none;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
         }
 
         button:hover {
-            background-color: #163a5c;
+            background: var(--blue-dark);
         }
 
         .secondary-button {
-            background-color: #666666;
-            margin-left: 8px;
+            background: #5d6472;
         }
 
         .secondary-button:hover {
-            background-color: #444444;
+            background: #414855;
         }
 
-        .results-header {
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+
+        .metric-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            margin-top: 8px;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .results-toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
-            margin-top: 30px;
+            gap: 18px;
+            margin: 8px 0 14px;
+        }
+
+        .results-toolbar h2 {
+            margin: 0;
+            font-size: 26px;
         }
 
         .sort-control {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .sort-control label {
@@ -84,40 +194,113 @@
         }
 
         .sort-control select {
-            width: 220px;
-            margin: 0;
+            min-width: 240px;
+        }
+
+        .status-text {
+            color: var(--muted);
+            margin: 0 0 14px;
+        }
+
+        .comparison-panel {
+            display: none;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .comparison-panel h3 {
+            margin: 0 0 12px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .comparison-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            background: #fbfcff;
+        }
+
+        .comparison-card h4 {
+            margin: 0 0 8px;
+            color: var(--blue);
+        }
+
+        .comparison-card p {
+            margin: 5px 0;
+            color: #354052;
         }
 
         .table-wrapper {
             overflow-x: auto;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
         }
 
         table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 1900px;
-            background-color: white;
+            min-width: 2100px;
         }
 
         th,
         td {
-            border: 1px solid #cccccc;
-            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            padding: 12px;
             text-align: left;
             vertical-align: top;
         }
 
         th {
-            background-color: #e9eef5;
+            background: #e9eef6;
+            color: #263248;
+            font-size: 14px;
+        }
+
+        td {
+            background: white;
+            line-height: 1.35;
+        }
+
+        tr:hover td {
+            background: #fbfdff;
         }
 
         a {
-            color: #1f4e79;
+            color: var(--blue);
+            font-weight: 700;
         }
 
         .fit-score {
-            font-weight: bold;
-            color: #1f4e79;
+            font-weight: 800;
+            color: var(--blue);
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .pill-yes {
+            background: var(--soft-green);
+            color: var(--green);
+        }
+
+        .pill-no {
+            background: #f3f4f6;
+            color: #4b5563;
         }
 
         .fit-reasons,
@@ -128,114 +311,180 @@
 
         .fit-reasons li,
         .score-breakdown li {
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .score-breakdown strong {
-            color: #1f4e79;
+            color: var(--blue);
+        }
+
+        .summary-cell {
+            font-weight: 700;
+            color: #354052;
+        }
+
+        @media (max-width: 900px) {
+            .app-header,
+            .page {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .search-grid,
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .results-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .sort-control {
+                width: 100%;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .sort-control select {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-<h1>TransferPath</h1>
-<p>Find universities based on your transfer profile.</p>
+<header class="app-header">
+    <h1>TransferPath</h1>
+    <p>Search transfer-friendly universities, compare major-specific program fit, and understand why each school matches your profile.</p>
+</header>
 
-<div class="search-box">
-    <label for="country">Country:</label><br>
-    <input type="text" id="country" placeholder="USA">
+<main class="page">
+    <section class="search-panel">
+        <div class="search-grid">
+            <div>
+                <label for="country">Country</label>
+                <input type="text" id="country" placeholder="USA">
+            </div>
 
-    <br>
+            <div>
+                <label for="gpa">GPA</label>
+                <input type="number" id="gpa" step="0.1" placeholder="3.4">
+            </div>
 
-    <label for="gpa">GPA:</label><br>
-    <input type="number" id="gpa" step="0.1" placeholder="3.4">
+            <div>
+                <label for="major">Major</label>
+                <input type="text" id="major" placeholder="Computer Science">
+            </div>
 
-    <br>
+            <div>
+                <label for="international">International Students</label>
+                <select id="international">
+                    <option value="">Any</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
 
-    <label for="major">Major:</label><br>
-    <input type="text" id="major" placeholder="Computer Science">
+            <div class="checkbox-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="fall">
+                    Fall
+                </label>
 
-    <br>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="spring">
+                    Spring
+                </label>
+            </div>
 
-    <label for="international">Accepts International Students:</label><br>
-    <select id="international">
-        <option value="">Any</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-    </select>
+            <div class="button-row">
+                <button onclick="searchUniversities()">Search</button>
+                <button onclick="clearSearch()" class="secondary-button">Clear</button>
+            </div>
+        </div>
+    </section>
 
-    <br>
+    <section class="metrics">
+        <div class="metric-card">
+            <div class="metric-label">Results</div>
+            <div class="metric-value" id="resultCount">0</div>
+        </div>
 
-    <label>
-        <input type="checkbox" id="fall">
-        Fall Admission
-    </label>
+        <div class="metric-card">
+            <div class="metric-label">Best Fit Score</div>
+            <div class="metric-value" id="bestFitScore">N/A</div>
+        </div>
 
-    <br>
+        <div class="metric-card">
+            <div class="metric-label">Lowest Estimated Cost</div>
+            <div class="metric-value" id="lowestCost">N/A</div>
+        </div>
+    </section>
 
-    <label>
-        <input type="checkbox" id="spring">
-        Spring Admission
-    </label>
+    <section class="comparison-panel" id="comparisonPanel">
+        <h3>School Comparison</h3>
+        <div class="comparison-grid" id="comparisonGrid"></div>
+    </section>
 
-    <br>
+    <div class="results-toolbar">
+        <h2>Results</h2>
 
-    <button onclick="searchUniversities()">Search</button>
-    <button onclick="clearSearch()" class="secondary-button">Clear Search</button>
-</div>
-
-<div class="results-header">
-    <h2>Results</h2>
-
-    <div class="sort-control">
-        <label for="sortBy">Sort by:</label>
-        <select id="sortBy" onchange="sortAndDisplayResults()">
-            <option value="fitScoreDesc">Fit Score: High to Low</option>
-            <option value="costAsc">Cost: Low to High</option>
-            <option value="costDesc">Cost: High to Low</option>
-            <option value="programGpaAsc">Program GPA: Low to High</option>
-            <option value="programGpaDesc">Program GPA: High to Low</option>
-            <option value="nameAsc">Name: A to Z</option>
-        </select>
+        <div class="sort-control">
+            <label for="sortBy">Sort by</label>
+            <select id="sortBy" onchange="sortAndDisplayResults()">
+                <option value="fitScoreDesc">Fit Score: High to Low</option>
+                <option value="costAsc">Cost: Low to High</option>
+                <option value="costDesc">Cost: High to Low</option>
+                <option value="programGpaAsc">Program GPA: Low to High</option>
+                <option value="programGpaDesc">Program GPA: High to Low</option>
+                <option value="deadlineAsc">Deadline: Soonest First</option>
+                <option value="nameAsc">Name: A to Z</option>
+            </select>
+        </div>
     </div>
-</div>
 
-<div class="table-wrapper">
-    <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Fit Score</th>
-            <th>Score Breakdown</th>
-            <th>Matched Major</th>
-            <th>Program GPA</th>
-            <th>Estimated Cost</th>
-            <th>Competitiveness</th>
-            <th>Program Link</th>
-            <th>Fit Reasons</th>
-            <th>Requirement Summary</th>
-            <th>Location</th>
-            <th>Country</th>
-            <th>University GPA</th>
-            <th>International</th>
-            <th>Fall</th>
-            <th>Spring</th>
-            <th>Deadline</th>
-            <th>Website</th>
-            <th>Application Portal</th>
-            <th>Transfer Requirements</th>
-        </tr>
-        </thead>
-        <tbody id="results">
-        <tr>
-            <td colspan="19">No results yet.</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <p class="status-text" id="statusText">No search has been run yet.</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Compare</th>
+                <th>Name</th>
+                <th>Fit Score</th>
+                <th>Score Breakdown</th>
+                <th>Matched Major</th>
+                <th>Program GPA</th>
+                <th>Estimated Cost</th>
+                <th>Competitiveness</th>
+                <th>Program Link</th>
+                <th>Fit Reasons</th>
+                <th>Requirement Summary</th>
+                <th>Location</th>
+                <th>Country</th>
+                <th>University GPA</th>
+                <th>International</th>
+                <th>Fall</th>
+                <th>Spring</th>
+                <th>Deadline</th>
+                <th>Website</th>
+                <th>Application Portal</th>
+                <th>Transfer Requirements</th>
+            </tr>
+            </thead>
+            <tbody id="results">
+            <tr>
+                <td colspan="21">No results yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
 
 <script>
     let currentResults = [];
+    let selectedUniversityIds = new Set();
 
     window.addEventListener("load", function () {
         loadSearchFromUrl();
@@ -255,6 +504,10 @@
 
         const apiUrl = "/universities/search/filter?" + params.toString();
 
+        document.getElementById("statusText").textContent = "Searching universities...";
+        selectedUniversityIds = new Set();
+        updateComparisonPanel();
+
         fetch(apiUrl)
             .then(response => response.json())
             .then(universities => {
@@ -263,13 +516,14 @@
             })
             .catch(error => {
                 console.error("Error searching universities:", error);
+                document.getElementById("statusText").textContent = "Search failed. Check the backend console.";
             });
     }
 
     function buildSearchParams() {
-        const country = document.getElementById("country").value;
+        const country = document.getElementById("country").value.trim();
         const gpa = document.getElementById("gpa").value;
-        const major = document.getElementById("major").value;
+        const major = document.getElementById("major").value.trim();
         const international = document.getElementById("international").value;
         const fall = document.getElementById("fall").checked;
         const spring = document.getElementById("spring").checked;
@@ -324,14 +578,17 @@
         document.getElementById("sortBy").value = "fitScoreDesc";
 
         currentResults = [];
+        selectedUniversityIds = new Set();
 
-        const resultsTable = document.getElementById("results");
-        resultsTable.innerHTML = `
+        document.getElementById("results").innerHTML = `
             <tr>
-                <td colspan="19">No results yet.</td>
+                <td colspan="21">No results yet.</td>
             </tr>
         `;
 
+        updateMetrics([]);
+        updateComparisonPanel();
+        document.getElementById("statusText").textContent = "No search has been run yet.";
         window.history.pushState({}, "", window.location.pathname);
     }
 
@@ -360,14 +617,19 @@
                 return numberOrZero(second.minimumRecommendedProgramGpa) - numberOrZero(first.minimumRecommendedProgramGpa);
             }
 
+            if (sortBy === "deadlineAsc") {
+                return deadlineValue(first.applicationDeadline) - deadlineValue(second.applicationDeadline);
+            }
+
             if (sortBy === "nameAsc") {
-                return safeText(first.name).localeCompare(safeText(second.name));
+                return plainText(first.name).localeCompare(plainText(second.name));
             }
 
             return 0;
         });
 
         displayResults(sortedResults);
+        updateMetrics(sortedResults);
     }
 
     function numberOrZero(value) {
@@ -386,20 +648,60 @@
         return Number(value);
     }
 
-    function yesOrNo(value) {
-        if (value === true) {
-            return "Yes";
+    function deadlineValue(value) {
+        if (!value || value.toLowerCase() === "rolling") {
+            return 9999;
         }
 
-        return "No";
+        const monthOrder = {
+            january: 1,
+            february: 2,
+            march: 3,
+            april: 4,
+            may: 5,
+            june: 6,
+            july: 7,
+            august: 8,
+            september: 9,
+            october: 10,
+            november: 11,
+            december: 12
+        };
+
+        const parts = value.toLowerCase().split(" ");
+        const month = monthOrder[parts[0]] || 99;
+        const day = Number(parts[1]) || 31;
+
+        return month * 100 + day;
     }
 
-    function safeText(value) {
+    function yesOrNo(value) {
+        if (value === true) {
+            return `<span class="pill pill-yes">Yes</span>`;
+        }
+
+        return `<span class="pill pill-no">No</span>`;
+    }
+
+    function plainText(value) {
         if (value === null || value === undefined || value === "") {
             return "N/A";
         }
 
         return String(value);
+    }
+
+    function safeText(value) {
+        return escapeHtml(plainText(value));
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
     function formatScore(value) {
@@ -453,7 +755,7 @@
             return "N/A";
         }
 
-        return `<a href="${url}" target="_blank">${label}</a>`;
+        return `<a href="${escapeHtml(url)}" target="_blank">${safeText(label)}</a>`;
     }
 
     function displayResults(universities) {
@@ -463,11 +765,15 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="20">No universities found.</td>
+                    <td colspan="21">No universities found.</td>
                 </tr>
             `;
+
+            document.getElementById("statusText").textContent = "No universities matched this search.";
             return;
         }
+
+        document.getElementById("statusText").textContent = `${universities.length} universities matched this search. Select up to 4 schools to compare.`;
 
         universities.forEach(university => {
             const websiteLink = buildLink(university.websiteUrl, "Visit website");
@@ -478,9 +784,18 @@
                 ? safeText(university.transferRequirementAnalysis.summary)
                 : "N/A";
             const scoreBreakdown = buildScoreBreakdown(university.scoreBreakdown);
+            const checked = selectedUniversityIds.has(university.id) ? "checked" : "";
 
             const row = `
                 <tr>
+                    <td>
+                        <input
+                            type="checkbox"
+                            ${checked}
+                            onchange="toggleComparison(${university.id}, this.checked)"
+                            aria-label="Compare ${safeText(university.name)}"
+                        >
+                    </td>
                     <td>${safeText(university.name)}</td>
                     <td class="fit-score">${formatScore(university.fitScore)}</td>
                     <td>${scoreBreakdown}</td>
@@ -490,7 +805,7 @@
                     <td>${safeText(university.programCompetitiveness)}</td>
                     <td>${programLink}</td>
                     <td>${fitReasonsList}</td>
-                    <td>${requirementSummary}</td>
+                    <td class="summary-cell">${requirementSummary}</td>
                     <td>${location}</td>
                     <td>${safeText(university.country)}</td>
                     <td>${safeText(university.minGpa)}</td>
@@ -506,6 +821,68 @@
 
             resultsTable.innerHTML += row;
         });
+    }
+
+    function updateMetrics(results) {
+        document.getElementById("resultCount").textContent = results.length;
+
+        if (results.length === 0) {
+            document.getElementById("bestFitScore").textContent = "N/A";
+            document.getElementById("lowestCost").textContent = "N/A";
+            return;
+        }
+
+        const bestScore = Math.max(...results.map(result => numberOrZero(result.fitScore)));
+        const costs = results
+            .map(result => result.estimatedAnnualCost)
+            .filter(cost => cost !== null && cost !== undefined);
+
+        document.getElementById("bestFitScore").textContent = formatScore(bestScore);
+        document.getElementById("lowestCost").textContent = costs.length === 0
+            ? "N/A"
+            : formatMoney(Math.min(...costs));
+    }
+
+    function toggleComparison(universityId, isSelected) {
+        if (isSelected && selectedUniversityIds.size >= 4) {
+            alert("You can compare up to 4 schools at a time.");
+            sortAndDisplayResults();
+            return;
+        }
+
+        if (isSelected) {
+            selectedUniversityIds.add(universityId);
+        } else {
+            selectedUniversityIds.delete(universityId);
+        }
+
+        updateComparisonPanel();
+    }
+
+    function updateComparisonPanel() {
+        const panel = document.getElementById("comparisonPanel");
+        const grid = document.getElementById("comparisonGrid");
+
+        const selectedSchools = currentResults.filter(university => selectedUniversityIds.has(university.id));
+
+        if (selectedSchools.length === 0) {
+            panel.style.display = "none";
+            grid.innerHTML = "";
+            return;
+        }
+
+        panel.style.display = "block";
+
+        grid.innerHTML = selectedSchools.map(university => `
+            <div class="comparison-card">
+                <h4>${safeText(university.name)}</h4>
+                <p><strong>Fit:</strong> ${formatScore(university.fitScore)}</p>
+                <p><strong>Major:</strong> ${safeText(university.matchedMajor)}</p>
+                <p><strong>Cost:</strong> ${formatMoney(university.estimatedAnnualCost)}</p>
+                <p><strong>Program GPA:</strong> ${safeText(university.minimumRecommendedProgramGpa)}</p>
+                <p><strong>Deadline:</strong> ${safeText(university.applicationDeadline)}</p>
+            </div>
+        `).join("");
     }
 </script>
 </body>
