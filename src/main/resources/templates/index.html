@@ -216,9 +216,33 @@
         }
 
         .comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
+            overflow-x: auto;
+        }
+
+        .comparison-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        .comparison-table th {
+            background: #e9eef6;
+            color: #263248;
+        }
+
+        .comparison-table td {
+            background: #ffffff;
         }
 
         .comparison-card {
@@ -873,16 +897,85 @@
 
         panel.style.display = "block";
 
-        grid.innerHTML = selectedSchools.map(university => `
-            <div class="comparison-card">
-                <h4>${safeText(university.name)}</h4>
-                <p><strong>Fit:</strong> ${formatScore(university.fitScore)}</p>
-                <p><strong>Major:</strong> ${safeText(university.matchedMajor)}</p>
-                <p><strong>Cost:</strong> ${formatMoney(university.estimatedAnnualCost)}</p>
-                <p><strong>Program GPA:</strong> ${safeText(university.minimumRecommendedProgramGpa)}</p>
-                <p><strong>Deadline:</strong> ${safeText(university.applicationDeadline)}</p>
-            </div>
-        `).join("");
+        const schoolHeaders = selectedSchools
+            .map(university => `<th>${safeText(university.name)}</th>`)
+            .join("");
+
+        const comparisonRows = [
+            {
+                label: "Fit Score",
+                value: university => formatScore(university.fitScore)
+            },
+            {
+                label: "Matched Major",
+                value: university => safeText(university.matchedMajor)
+            },
+            {
+                label: "Program GPA",
+                value: university => safeText(university.minimumRecommendedProgramGpa)
+            },
+            {
+                label: "Estimated Cost",
+                value: university => formatMoney(university.estimatedAnnualCost)
+            },
+            {
+                label: "Competitiveness",
+                value: university => safeText(university.programCompetitiveness)
+            },
+            {
+                label: "Deadline",
+                value: university => safeText(university.applicationDeadline)
+            },
+            {
+                label: "International",
+                value: university => university.acceptsInternational ? "Yes" : "No"
+            },
+            {
+                label: "Fall",
+                value: university => university.acceptsFall ? "Yes" : "No"
+            },
+            {
+                label: "Spring",
+                value: university => university.acceptsSpring ? "Yes" : "No"
+            },
+            {
+                label: "Requirement Summary",
+                value: university => university.transferRequirementAnalysis
+                    ? safeText(university.transferRequirementAnalysis.summary)
+                    : "N/A"
+            }
+        ];
+
+        const rowHtml = comparisonRows
+            .map(row => {
+                const cells = selectedSchools
+                    .map(university => `<td>${row.value(university)}</td>`)
+                    .join("");
+
+                return `
+                <tr>
+                    <th>${row.label}</th>
+                    ${cells}
+                </tr>
+            `;
+            })
+            .join("");
+
+        grid.innerHTML = `
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                <tr>
+                    <th>Metric</th>
+                    ${schoolHeaders}
+                </tr>
+                </thead>
+                <tbody>
+                    ${rowHtml}
+                </tbody>
+            </table>
+        </div>
+    `;
     }
 </script>
 </body>
