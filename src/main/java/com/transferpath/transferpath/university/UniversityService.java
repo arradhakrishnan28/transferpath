@@ -13,15 +13,18 @@ public class UniversityService {
     private final UniversityRepository universityRepository;
     private final ProgramRepository programRepository;
     private final TransferRequirementParser transferRequirementParser;
+    private final AiExplanationService aiExplanationService;
 
     public UniversityService(
             UniversityRepository universityRepository,
             ProgramRepository programRepository,
-            TransferRequirementParser transferRequirementParser
+            TransferRequirementParser transferRequirementParser,
+            AiExplanationService aiExplanationService
     ) {
         this.universityRepository = universityRepository;
         this.programRepository = programRepository;
         this.transferRequirementParser = transferRequirementParser;
+        this.aiExplanationService = aiExplanationService;
     }
 
     public List<UniversitySearchResult> searchUniversities(
@@ -61,12 +64,27 @@ public class UniversityService {
                     TransferRequirementAnalysis requirementAnalysis =
                             transferRequirementParser.analyze(university.getTransferRequirements());
 
-                    return UniversitySearchResult.fromUniversity(
+                    UniversitySearchResult resultWithoutAi = UniversitySearchResult.fromUniversity(
                             university,
                             scoreBreakdown,
                             fitReasons,
                             matchedProgram.orElse(null),
                             requirementAnalysis
+                    );
+
+                    AiTransferExplanation aiExplanation = aiExplanationService.explain(
+                            resultWithoutAi,
+                            major,
+                            gpa
+                    );
+
+                    return UniversitySearchResult.fromUniversity(
+                            university,
+                            scoreBreakdown,
+                            fitReasons,
+                            matchedProgram.orElse(null),
+                            requirementAnalysis,
+                            aiExplanation
                     );
                 })
                 .sorted(Comparator.comparing(UniversitySearchResult::getFitScore).reversed())

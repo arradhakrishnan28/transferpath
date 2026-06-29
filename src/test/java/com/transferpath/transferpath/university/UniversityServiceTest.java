@@ -14,11 +14,13 @@ class UniversityServiceTest {
         UniversityRepository universityRepository = mock(UniversityRepository.class);
         ProgramRepository programRepository = mock(ProgramRepository.class);
         TransferRequirementParser transferRequirementParser = new TransferRequirementParser();
+        AiExplanationService aiExplanationService = new AiExplanationService();
 
         UniversityService service = new UniversityService(
                 universityRepository,
                 programRepository,
-                transferRequirementParser
+                transferRequirementParser,
+                aiExplanationService
         );
 
         University strongMatch = new University(
@@ -102,11 +104,13 @@ class UniversityServiceTest {
         UniversityRepository universityRepository = mock(UniversityRepository.class);
         ProgramRepository programRepository = mock(ProgramRepository.class);
         TransferRequirementParser transferRequirementParser = new TransferRequirementParser();
+        AiExplanationService aiExplanationService = new AiExplanationService();
 
         UniversityService service = new UniversityService(
                 universityRepository,
                 programRepository,
-                transferRequirementParser
+                transferRequirementParser,
+                aiExplanationService
         );
 
         University university = new University(
@@ -181,6 +185,13 @@ class UniversityServiceTest {
                         .getSummary()
                         .contains("Recommends")
         );
+
+        assertNotNull(result.getAiExplanation());
+        assertNotNull(result.getAiExplanation().getSummary());
+        assertFalse(result.getAiExplanation().getSummary().isBlank());
+        assertFalse(result.getAiExplanation().getStrengths().isEmpty());
+        assertFalse(result.getAiExplanation().getRisks().isEmpty());
+        assertFalse(result.getAiExplanation().getNextSteps().isEmpty());
 
         assertTrue(
                 result.getFitReasons().stream()

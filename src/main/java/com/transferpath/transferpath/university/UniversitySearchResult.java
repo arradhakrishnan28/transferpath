@@ -24,6 +24,7 @@ public class UniversitySearchResult {
     private Double fitScore;
     private ScoreBreakdown scoreBreakdown;
     private List<String> fitReasons;
+    private AiTransferExplanation aiExplanation;
 
     private String matchedMajor;
     private String matchedDegreeLevel;
@@ -50,6 +51,7 @@ public class UniversitySearchResult {
             Double fitScore,
             ScoreBreakdown scoreBreakdown,
             List<String> fitReasons,
+            AiTransferExplanation aiExplanation,
             String matchedMajor,
             String matchedDegreeLevel,
             Double estimatedAnnualCost,
@@ -74,6 +76,7 @@ public class UniversitySearchResult {
         this.fitScore = fitScore;
         this.scoreBreakdown = scoreBreakdown;
         this.fitReasons = fitReasons;
+        this.aiExplanation = aiExplanation;
         this.matchedMajor = matchedMajor;
         this.matchedDegreeLevel = matchedDegreeLevel;
         this.estimatedAnnualCost = estimatedAnnualCost;
@@ -88,7 +91,7 @@ public class UniversitySearchResult {
             List<String> fitReasons,
             Program matchedProgram
     ) {
-        return fromUniversity(university, scoreBreakdown, fitReasons, matchedProgram, null);
+        return fromUniversity(university, scoreBreakdown, fitReasons, matchedProgram, null, null);
     }
 
     public static UniversitySearchResult fromUniversity(
@@ -97,6 +100,17 @@ public class UniversitySearchResult {
             List<String> fitReasons,
             Program matchedProgram,
             TransferRequirementAnalysis transferRequirementAnalysis
+    ) {
+        return fromUniversity(university, scoreBreakdown, fitReasons, matchedProgram, transferRequirementAnalysis, null);
+    }
+
+    public static UniversitySearchResult fromUniversity(
+            University university,
+            ScoreBreakdown scoreBreakdown,
+            List<String> fitReasons,
+            Program matchedProgram,
+            TransferRequirementAnalysis transferRequirementAnalysis,
+            AiTransferExplanation aiExplanation
     ) {
         return new UniversitySearchResult(
                 university.getId(),
@@ -116,6 +130,7 @@ public class UniversitySearchResult {
                 roundScore(scoreBreakdown.total()),
                 scoreBreakdown,
                 fitReasons,
+                aiExplanation,
                 matchedProgram == null ? null : matchedProgram.getMajorName(),
                 matchedProgram == null ? null : matchedProgram.getDegreeLevel(),
                 matchedProgram == null ? null : matchedProgram.getEstimatedAnnualCost(),
@@ -195,6 +210,10 @@ public class UniversitySearchResult {
 
     public List<String> getFitReasons() {
         return fitReasons;
+    }
+
+    public AiTransferExplanation getAiExplanation() {
+        return aiExplanation;
     }
 
     public String getMatchedMajor() {
