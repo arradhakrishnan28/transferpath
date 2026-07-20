@@ -204,3 +204,18 @@ spring.jpa.hibernate.ddl-auto=validate
 ```
 
 This means Hibernate validates the schema but does not create or mutate tables automatically.
+
+## Production Deployment Checklist
+
+Before deploying TransferPath publicly:
+
+- Provision a PostgreSQL database.
+- Set `DATABASE_URL`, `DATABASE_USERNAME`, and `DATABASE_PASSWORD` in the hosting platform.
+- Set `PORT` if required by the host.
+- Run the application build with `./mvnw clean package`.
+- Start the application with the `Procfile` command.
+- Confirm Flyway applies all migrations on a fresh database.
+- Confirm `/` loads the TransferPath frontend.
+- Confirm `/universities` returns seeded university JSON.
+- Confirm `/programs` returns seeded program JSON.
+- Confirm `/universities/search/filter` returns ranked results with fit scores, requirement analysis, and AI explanations.
