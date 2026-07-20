@@ -174,3 +174,33 @@ Future versions will expand the dataset with larger public sources, richer sourc
 - Improve the fit score with more transparent weighting
 - Add AI-assisted fit explanations
 - Add deployment so TransferPath can be used publicly
+
+## Deployment Configuration
+
+TransferPath is configured so it can run locally or in a hosted environment.
+
+Local defaults are defined in `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=${DATABASE_URL:jdbc:postgresql://localhost:5432/transferpath}
+spring.datasource.username=${DATABASE_USERNAME:adityarajiv}
+spring.datasource.password=${DATABASE_PASSWORD:}
+server.port=${PORT:8080}
+```
+
+For deployment, the hosting platform should provide these environment variables:
+
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL JDBC connection URL |
+| `DATABASE_USERNAME` | PostgreSQL username |
+| `DATABASE_PASSWORD` | PostgreSQL password |
+| `PORT` | Server port assigned by the host |
+
+Flyway owns database schema creation and migration. Hibernate runs with:
+
+```properties
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+This means Hibernate validates the schema but does not create or mutate tables automatically.
