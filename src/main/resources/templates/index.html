@@ -262,7 +262,7 @@
         table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 2100px;
+            min-width: 2300px;
         }
 
         th,
@@ -358,13 +358,15 @@
         }
 
         .fit-reasons,
-        .score-breakdown {
+        .score-breakdown,
+        .ai-list {
             margin: 0;
             padding-left: 18px;
         }
 
         .fit-reasons li,
-        .score-breakdown li {
+        .score-breakdown li,
+        .ai-list li {
             margin-bottom: 5px;
         }
 
@@ -375,6 +377,30 @@
         .summary-cell {
             font-weight: 800;
             color: #344054;
+        }
+
+        .ai-summary {
+            min-width: 280px;
+        }
+
+        .ai-summary-title {
+            margin-bottom: 8px;
+            font-weight: 900;
+            color: var(--blue);
+        }
+
+        .ai-section-title {
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .ai-list {
+            margin: 0;
+            padding-left: 18px;
         }
 
         @media (max-width: 900px) {
@@ -524,6 +550,7 @@
                 <th>Program Link</th>
                 <th>Fit Reasons</th>
                 <th>Requirement Summary</th>
+                <th>AI Explanation</th>
                 <th>Location</th>
                 <th>Country</th>
                 <th>University GPA</th>
@@ -538,7 +565,7 @@
             </thead>
             <tbody id="results">
             <tr>
-                <td colspan="21">No results yet.</td>
+                <td colspan="22">No results yet.</td>
             </tr>
             </tbody>
         </table>
@@ -645,7 +672,7 @@
 
         document.getElementById("results").innerHTML = `
             <tr>
-                <td colspan="21">No results yet.</td>
+                <td colspan="22">No results yet.</td>
             </tr>
         `;
 
@@ -847,6 +874,43 @@
         return `<ul class="fit-reasons">${items}</ul>`;
     }
 
+    function buildAiExplanation(aiExplanation) {
+        if (!aiExplanation) {
+            return "N/A";
+        }
+
+        const strengths = buildAiList(aiExplanation.strengths);
+        const risks = buildAiList(aiExplanation.risks);
+        const nextSteps = buildAiList(aiExplanation.nextSteps);
+
+        return `
+            <div class="ai-summary">
+                <div class="ai-summary-title">${safeText(aiExplanation.summary)}</div>
+
+                <div class="ai-section-title">Strengths</div>
+                ${strengths}
+
+                <div class="ai-section-title">Risks</div>
+                ${risks}
+
+                <div class="ai-section-title">Next Steps</div>
+                ${nextSteps}
+            </div>
+        `;
+    }
+
+    function buildAiList(items) {
+        if (!items || items.length === 0) {
+            return "N/A";
+        }
+
+        const listItems = items
+            .map(item => `<li>${safeText(item)}</li>`)
+            .join("");
+
+        return `<ul class="ai-list">${listItems}</ul>`;
+    }
+
     function buildScoreBreakdown(scoreBreakdown) {
         if (!scoreBreakdown) {
             return "N/A";
@@ -880,7 +944,7 @@
         if (universities.length === 0) {
             resultsTable.innerHTML = `
                 <tr>
-                    <td colspan="21">No universities found.</td>
+                    <td colspan="22">No universities found.</td>
                 </tr>
             `;
 
@@ -898,6 +962,7 @@
             const requirementSummary = university.transferRequirementAnalysis
                 ? safeText(university.transferRequirementAnalysis.summary)
                 : "N/A";
+            const aiExplanation = buildAiExplanation(university.aiExplanation);
             const scoreBreakdown = buildScoreBreakdown(university.scoreBreakdown);
             const checked = selectedUniversityIds.has(university.id) ? "checked" : "";
 
@@ -913,9 +978,9 @@
                     </td>
                     <td>${safeText(university.name)}</td>
                     <td class="fit-score">
-                    ${formatScore(university.fitScore)}
-                    <br>
-                    <span class="fit-label ${fitLabelClass(university.fitScore)}">${fitLabel(university.fitScore)}</span>
+                        ${formatScore(university.fitScore)}
+                        <br>
+                        <span class="fit-label ${fitLabelClass(university.fitScore)}">${fitLabel(university.fitScore)}</span>
                     </td>
                     <td>${scoreBreakdown}</td>
                     <td>${safeText(university.matchedMajor)}</td>
@@ -925,6 +990,7 @@
                     <td>${programLink}</td>
                     <td>${fitReasonsList}</td>
                     <td class="summary-cell">${requirementSummary}</td>
+                    <td>${aiExplanation}</td>
                     <td>${location}</td>
                     <td>${safeText(university.country)}</td>
                     <td>${safeText(university.minGpa)}</td>
@@ -1038,6 +1104,12 @@
                 value: university => university.transferRequirementAnalysis
                     ? safeText(university.transferRequirementAnalysis.summary)
                     : "N/A"
+            },
+            {
+                label: "AI Summary",
+                value: university => university.aiExplanation
+                    ? safeText(university.aiExplanation.summary)
+                    : "N/A"
             }
         ];
 
@@ -1048,29 +1120,29 @@
                     .join("");
 
                 return `
-                <tr>
-                    <th>${row.label}</th>
-                    ${cells}
-                </tr>
-            `;
+                    <tr>
+                        <th>${row.label}</th>
+                        ${cells}
+                    </tr>
+                `;
             })
             .join("");
 
         grid.innerHTML = `
-        <div class="comparison-table-wrapper">
-            <table class="comparison-table">
-                <thead>
-                <tr>
-                    <th>Metric</th>
-                    ${schoolHeaders}
-                </tr>
-                </thead>
-                <tbody>
-                    ${rowHtml}
-                </tbody>
-            </table>
-        </div>
-    `;
+            <div class="comparison-table-wrapper">
+                <table class="comparison-table">
+                    <thead>
+                    <tr>
+                        <th>Metric</th>
+                        ${schoolHeaders}
+                    </tr>
+                    </thead>
+                    <tbody>
+                        ${rowHtml}
+                    </tbody>
+                </table>
+            </div>
+        `;
     }
 </script>
 </body>
